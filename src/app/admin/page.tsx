@@ -49,6 +49,9 @@ export default function AdminDashboard() {
           <Link href="/admin/contractors/new" className="btn-primary text-sm">
             + Add Contractor
           </Link>
+          <Link href="/admin/reviews" className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg text-sm transition-colors">
+            Reviews
+          </Link>
           <Link href="/admin/pricing" className="bg-gray-700 hover:bg-gray-800 text-white font-semibold py-2 px-4 rounded-lg text-sm transition-colors">
             Pricing
           </Link>

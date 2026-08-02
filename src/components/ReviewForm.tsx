@@ -14,6 +14,8 @@ export function ReviewForm({ contractorId, contractorName, onSubmitted }: Review
   const [authorName, setAuthorName] = useState("");
   const [comment, setComment] = useState("");
   const [jobType, setJobType] = useState("");
+  const [contactEmail, setContactEmail] = useState("");
+  const [contactPhone, setContactPhone] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
@@ -23,6 +25,7 @@ export function ReviewForm({ contractorId, contractorName, onSubmitted }: Review
     if (rating === 0) { setError("Please select a rating"); return; }
     if (!authorName.trim()) { setError("Please enter your name"); return; }
     if (!comment.trim()) { setError("Please share your experience"); return; }
+    if (!contactEmail.trim() && !contactPhone.trim()) { setError("Please provide an email or phone number for verification (never shown publicly)"); return; }
 
     setSubmitting(true);
     setError("");
@@ -36,6 +39,8 @@ export function ReviewForm({ contractorId, contractorName, onSubmitted }: Review
       date: new Date().toISOString().split("T")[0],
       jobType: jobType.trim() || undefined,
       source: "in-app",
+      contactEmail: contactEmail.trim() || undefined,
+      contactPhone: contactPhone.trim() || undefined,
     };
 
     try {
@@ -122,6 +127,32 @@ export function ReviewForm({ contractorId, contractorName, onSubmitted }: Review
           />
         </div>
       </div>
+
+      <div className="grid sm:grid-cols-2 gap-4 mb-4">
+        <div>
+          <label className="block text-sm font-medium mb-1">Email (for verification) *</label>
+          <input
+            type="email"
+            value={contactEmail}
+            onChange={e => setContactEmail(e.target.value)}
+            placeholder="Never shown publicly"
+            className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+            style={{ fontSize: '16px' }}
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">Phone (for verification)</label>
+          <input
+            type="tel"
+            value={contactPhone}
+            onChange={e => setContactPhone(e.target.value)}
+            placeholder="Never shown publicly"
+            className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+            style={{ fontSize: '16px' }}
+          />
+        </div>
+      </div>
+      <p className="text-xs text-gray-400 -mt-2 mb-4">Required for verification — never displayed. At least one required. Helps us prevent fake reviews.</p>
 
       <div className="mb-4">
         <label className="block text-sm font-medium mb-1">Your Experience *</label>

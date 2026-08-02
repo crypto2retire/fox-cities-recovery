@@ -90,8 +90,20 @@ export interface Review {
   comment: string;
   date: string;
   jobType?: string;
-  source: 'in-app' | 'google' | 'imported'; // where the review came from
-  verified?: boolean; // verified customer
+  source: 'in-app' | 'google' | 'imported';
+  verified?: boolean;
+
+  // Private — never returned to public API, stored for verification only
+  contactEmail?: string;
+  contactPhone?: string;
+
+  // Fraud detection
+  flagged?: boolean;
+  flagReason?: string;
+
+  // Business response
+  businessResponse?: string;
+  businessResponseDate?: string;
 }
 
 export interface RoofEstimate {

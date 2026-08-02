@@ -97,6 +97,15 @@ export function addReview(r: Review): Review {
   return r;
 }
 
+export function updateReview(id: string, updates: Partial<Review>): Review | null {
+  const data = readData();
+  const idx = data.reviews.findIndex(r => r.id === id);
+  if (idx === -1) return null;
+  data.reviews[idx] = { ...data.reviews[idx], ...updates };
+  writeData(data);
+  return data.reviews[idx];
+}
+
 export function deleteReview(id: string): boolean {
   const data = readData();
   const idx = data.reviews.findIndex(r => r.id === id);

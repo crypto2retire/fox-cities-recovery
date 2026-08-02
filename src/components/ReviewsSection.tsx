@@ -64,6 +64,20 @@ export function ReviewsSection({
                   </div>
                 </div>
                 <p className="text-gray-700 text-sm">{review.comment}</p>
+                {review.flagged && (
+                  <p className="text-xs text-red-500 mt-1">⚠️ This review has been flagged for review: {review.flagReason}</p>
+                )}
+                {review.businessResponse && (
+                  <div className="mt-3 ml-4 pl-3 border-l-2 border-blue-300">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-xs font-semibold text-blue-700">{contractorName} responded:</span>
+                      {review.businessResponseDate && (
+                        <span className="text-xs text-gray-400">{review.businessResponseDate}</span>
+                      )}
+                    </div>
+                    <p className="text-sm text-gray-600">{review.businessResponse}</p>
+                  </div>
+                )}
               </div>
             ))}
           </div>
