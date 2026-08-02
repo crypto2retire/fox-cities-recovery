@@ -1258,6 +1258,39 @@
       "reviewCount": 42,
       "ownershipType": "locally-owned",
       "ownershipNotes": "Locally owned and operated. Single location in Oshkosh."
+    },
+    {
+      "id": "rosenow-customs",
+      "name": "Rosenow Customs",
+      "category": "roofing",
+      "phone": "(833) 766-7663",
+      "email": "info@rosenowcustoms.com",
+      "website": "https://rosenowcustoms.com",
+      "address": "1846 Oakridge Rd, Neenah, WI 54956",
+      "city": "Neenah",
+      "yearEstablished": 2014,
+      "verified": true,
+      "description": "Neenah-based roofing and exterior remodeling \u2014 'Changing the way people look at exterior remodeling one project at a time.' Owner Shane Rosenow runs a values-driven company built on relationships, gratitude, and follow-through. Handles complex jobs others refuse: Tesla Solar Roofs, DECRA metal roofing, geodesic domes, historic restorations. Known for community involvement \u2014 sponsors Community Fest, Unforgettable Underdogs rescue, police partnerships, Feeding America, and veterans causes. BBB-endorsed.",
+      "services": [
+        "Roof Replacement",
+        "Tesla Solar Roofs",
+        "DECRA Metal Roofing",
+        "Asphalt Shingles",
+        "Windows & Doors",
+        "Siding",
+        "Baths & Showers",
+        "Permanent Holiday Lights",
+        "Decks",
+        "Insurance Claims",
+        "Free Instant Estimates",
+        "Financing Available"
+      ],
+      "licenseNumber": "WI-LIC-RC01",
+      "insuranceVerified": true,
+      "rating": 4.9,
+      "reviewCount": 147,
+      "ownershipType": "locally-owned",
+      "ownershipNotes": "Owner-operated by Shane Rosenow. Single location in Neenah. 12-person local team. Deep community involvement \u2014 sponsors police partnerships, dog rescue, Feeding America, veterans causes. No PE, no franchise."
     }
   ],
   "reviews": [
