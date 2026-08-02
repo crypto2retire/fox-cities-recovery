@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { CATEGORY_LABELS } from "@/lib/types";
-import type { Contractor, ContractorCategory } from "@/lib/types";
+import { CATEGORY_LABELS, OWNERSHIP_LABELS } from "@/lib/types";
+import type { Contractor, ContractorCategory, OwnershipType } from "@/lib/types";
 
 function slugify(text: string): string {
   return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
@@ -28,6 +28,8 @@ export default function NewContractorPage() {
     licenseNumber: "",
     insuranceVerified: true,
     advertisingTier: "free" as "free" | "featured" | "premium",
+    ownershipType: "locally-owned" as OwnershipType,
+    ownershipNotes: "",
   });
 
   useEffect(() => {
@@ -58,6 +60,8 @@ export default function NewContractorPage() {
       rating: 5,
       reviewCount: 0,
       advertisingTier: form.advertisingTier,
+      ownershipType: form.ownershipType,
+      ownershipNotes: form.ownershipNotes,
     };
 
     const res = await fetch("/api/contractors", {
@@ -150,6 +154,21 @@ export default function NewContractorPage() {
               <option value="featured">Featured</option>
               <option value="premium">Premium</option>
             </select>
+          </div>
+        </div>
+
+        <div className="grid sm:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-1">Ownership Type *</label>
+            <select required value={form.ownershipType} onChange={e => update("ownershipType", e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+              {(Object.entries(OWNERSHIP_LABELS) as [OwnershipType, string][]).map(([k, v]) => (
+                <option key={k} value={k}>{v}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">Ownership Evidence</label>
+            <input value={form.ownershipNotes} onChange={e => update("ownershipNotes", e.target.value)} placeholder="How do you know? Single location, DFI lookup, etc." className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
           </div>
         </div>
 

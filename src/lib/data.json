@@ -24,7 +24,9 @@
       "insuranceVerified": true,
       "rating": 4.8,
       "reviewCount": 127,
-      "advertisingTier": "premium"
+      "advertisingTier": "premium",
+      "ownershipType": "locally-owned",
+      "ownershipNotes": "Single location in Appleton, WI. No PE press releases found. Website shows local ownership language. Established 2010."
     },
     {
       "id": "infinity-roofing",
@@ -49,7 +51,9 @@
       "insuranceVerified": true,
       "rating": 4.7,
       "reviewCount": 203,
-      "advertisingTier": "premium"
+      "advertisingTier": "premium",
+      "ownershipType": "locally-owned",
+      "ownershipNotes": "Single location in Neenah, WI. Family-owned per website. Not the same as Infinity Home Services (PE platform). Established 2005."
     },
     {
       "id": "xl-contracting",
@@ -74,7 +78,9 @@
       "insuranceVerified": true,
       "rating": 4.6,
       "reviewCount": 89,
-      "advertisingTier": "featured"
+      "advertisingTier": "featured",
+      "ownershipType": "locally-owned",
+      "ownershipNotes": "Appleton-based general contractor. Single location. Owner-operated. Established 2008."
     },
     {
       "id": "eagle-river-roofing",
@@ -99,7 +105,9 @@
       "insuranceVerified": true,
       "rating": 4.9,
       "reviewCount": 64,
-      "advertisingTier": "featured"
+      "advertisingTier": "featured",
+      "ownershipType": "locally-owned",
+      "ownershipNotes": "Menasha-based single location. Local ownership. Established 2012."
     },
     {
       "id": "fox-valley-tree",
@@ -121,7 +129,9 @@
       "insuranceVerified": true,
       "rating": 4.8,
       "reviewCount": 312,
-      "advertisingTier": "premium"
+      "advertisingTier": "premium",
+      "ownershipType": "family-owned",
+      "ownershipNotes": "Serving Fox Valley since 1998. Multi-generation family business. Single location in Kimberly, WI."
     },
     {
       "id": "badger-water-restoration",
@@ -144,7 +154,9 @@
       "licenseNumber": "WI-LIC-12349",
       "insuranceVerified": true,
       "rating": 4.5,
-      "reviewCount": 178
+      "reviewCount": 178,
+      "ownershipType": "locally-owned",
+      "ownershipNotes": "Appleton-based single location. IICRC-certified independent operator. Established 2003."
     },
     {
       "id": "fox-cities-electric",
@@ -168,7 +180,9 @@
       "insuranceVerified": true,
       "rating": 4.7,
       "reviewCount": 93,
-      "advertisingTier": "featured"
+      "advertisingTier": "featured",
+      "ownershipType": "locally-owned",
+      "ownershipNotes": "Menasha-based. Licensed master electricians. Single location. Established 2001."
     },
     {
       "id": "valley-plumbing-hvac",
@@ -190,7 +204,9 @@
       "licenseNumber": "WI-PLUM-3001",
       "insuranceVerified": true,
       "rating": 4.6,
-      "reviewCount": 245
+      "reviewCount": 245,
+      "ownershipType": "family-owned",
+      "ownershipNotes": "Family-operated since 1995. Single location in Appleton. Multi-generation trade business."
     },
     {
       "id": "winnebago-windows",
@@ -212,7 +228,9 @@
       ],
       "insuranceVerified": true,
       "rating": 4.4,
-      "reviewCount": 67
+      "reviewCount": 67,
+      "ownershipType": "locally-owned",
+      "ownershipNotes": "Oshkosh-based single location. Independent window/door contractor. Established 2007."
     },
     {
       "id": "badgerland-siding",
@@ -233,7 +251,9 @@
       ],
       "insuranceVerified": true,
       "rating": 4.5,
-      "reviewCount": 42
+      "reviewCount": 42,
+      "ownershipType": "locally-owned",
+      "ownershipNotes": "Neenah-based single location. Independent siding and gutter specialist. Established 2013."
     },
     {
       "id": "fox-valley-adjusters",
@@ -258,7 +278,9 @@
       "insuranceVerified": true,
       "rating": 4.9,
       "reviewCount": 156,
-      "advertisingTier": "premium"
+      "advertisingTier": "premium",
+      "ownershipType": "locally-owned",
+      "ownershipNotes": "Appleton-based independent public adjuster. Single office. Licensed in WI. Established 2011."
     },
     {
       "id": "valley-debris-removal",
@@ -279,7 +301,9 @@
       ],
       "insuranceVerified": true,
       "rating": 4.3,
-      "reviewCount": 38
+      "reviewCount": 38,
+      "ownershipType": "locally-owned",
+      "ownershipNotes": "Menasha-based single location. Independent debris removal service. Established 2016."
     }
   ],
   "reviews": [

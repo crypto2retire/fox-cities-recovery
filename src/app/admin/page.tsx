@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import type { Contractor, Review } from "@/lib/types";
+import { OWNERSHIP_LABELS } from "@/lib/types";
 
 export default function AdminDashboard() {
   const [contractors, setContractors] = useState<Contractor[]>([]);
@@ -68,6 +69,7 @@ export default function AdminDashboard() {
                 <th className="text-left px-4 py-3 font-semibold">City</th>
                 <th className="text-left px-4 py-3 font-semibold">Est.</th>
                 <th className="text-left px-4 py-3 font-semibold">Verified</th>
+                <th className="text-left px-4 py-3 font-semibold">Ownership</th>
                 <th className="text-left px-4 py-3 font-semibold">Ad Tier</th>
                 <th className="text-left px-4 py-3 font-semibold">Rating</th>
                 <th className="text-right px-4 py-3 font-semibold">Actions</th>
@@ -81,6 +83,7 @@ export default function AdminDashboard() {
                   <td className="px-4 py-3 text-gray-600">{c.city}</td>
                   <td className="px-4 py-3 text-gray-600">{c.yearEstablished}</td>
                   <td className="px-4 py-3">{c.verified ? '✅' : '❌'}</td>
+                  <td className="px-4 py-3 text-xs">{OWNERSHIP_LABELS[c.ownershipType] || '?'}</td>
                   <td className="px-4 py-3 text-gray-600">{c.advertisingTier || '—'}</td>
                   <td className="px-4 py-3">★ {c.rating}</td>
                   <td className="px-4 py-3 text-right">

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getContractors } from "@/lib/data-store";
+import { OwnershipBadge } from "@/components/OwnershipBadge";
 
 export default function Home() {
   const contractors = getContractors();
@@ -82,12 +83,15 @@ export default function Home() {
               <Link key={c.id} href={`/contractors/${c.id}`} className="card group">
                 <div className="flex items-start justify-between mb-3">
                   <span className="badge-category">{c.category.replace('-', ' ')}</span>
-                  {c.verified && (
-                    <span className="badge-verified">
-                      <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/></svg>
-                      Verified Local
-                    </span>
-                  )}
+                  <div className="flex items-center gap-1">
+                    <OwnershipBadge type={c.ownershipType} compact />
+                    {c.verified && (
+                      <span className="badge-verified">
+                        <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/></svg>
+                        Verified
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <h3 className="font-bold text-lg group-hover:text-blue-700 transition-colors">{c.name}</h3>
                 <p className="text-sm text-gray-500 mt-1">{c.city}, WI · Est. {c.yearEstablished}</p>

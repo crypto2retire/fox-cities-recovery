@@ -1,6 +1,7 @@
 import { getContractors, getContractorById, getReviewsForContractor } from "@/lib/data-store";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { OwnershipBadge } from "@/components/OwnershipBadge";
 
 export function generateStaticParams() {
   return getContractors().map(c => ({ id: c.id }));
@@ -31,6 +32,7 @@ export default async function ContractorDetailPage({
           <div>
             <div className="flex items-center gap-3 flex-wrap mb-2">
               <h1 className="text-2xl sm:text-3xl font-extrabold">{contractor.name}</h1>
+              <OwnershipBadge type={contractor.ownershipType} />
               {contractor.verified && (
                 <span className="badge-verified text-sm">
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/></svg>
@@ -137,6 +139,20 @@ export default async function ContractorDetailPage({
 
         {/* Sidebar */}
         <div className="space-y-6">
+          {/* Ownership transparency */}
+          <div className="bg-white rounded-xl shadow-sm border p-4">
+            <h3 className="font-bold text-sm mb-2">Business Ownership</h3>
+            <div className="flex items-center gap-2 mb-2">
+              <OwnershipBadge type={contractor.ownershipType} />
+            </div>
+            {contractor.ownershipNotes && (
+              <p className="text-xs text-gray-500">{contractor.ownershipNotes}</p>
+            )}
+            <p className="text-xs text-gray-400 mt-2">
+              <strong>Why this matters:</strong> Locally owned businesses typically offer more flexible pricing, personalized service, and direct accountability. PE-backed and corporate contractors may have standardized pricing models designed to maximize investor returns.
+            </p>
+          </div>
+
           {/* Quick contact CTA */}
           <div className="bg-blue-700 text-white rounded-xl p-6 text-center sticky top-24">
             <h3 className="font-bold text-lg mb-2">Need Help Now?</h3>

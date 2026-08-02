@@ -2,14 +2,16 @@
 
 import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
-import { CATEGORY_LABELS } from "@/lib";
-import type { Contractor, ContractorCategory } from "@/lib";
+import { CATEGORY_LABELS, OWNERSHIP_LABELS } from "@/lib";
+import type { Contractor, ContractorCategory, OwnershipType } from "@/lib";
+import { OwnershipBadge } from "@/components/OwnershipBadge";
 
 export default function ContractorsPage() {
   const [contractors, setContractors] = useState<Contractor[]>([]);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<string>("all");
   const [city, setCity] = useState<string>("all");
+  const [ownership, setOwnership] = useState<string>("all");
   const [showVerifiedOnly, setShowVerifiedOnly] = useState(false);
 
   useEffect(() => {
@@ -31,10 +33,11 @@ export default function ContractorsPage() {
         c.services.some(s => s.toLowerCase().includes(search.toLowerCase()));
       const matchCategory = category === "all" || c.category === category;
       const matchCity = city === "all" || c.city === city;
+      const matchOwnership = ownership === "all" || c.ownershipType === ownership;
       const matchVerified = !showVerifiedOnly || c.verified;
-      return matchSearch && matchCategory && matchCity && matchVerified;
+      return matchSearch && matchCategory && matchCity && matchOwnership && matchVerified;
     });
-  }, [search, category, city, showVerifiedOnly]);
+  }, [search, category, city, ownership, showVerifiedOnly]);
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 sm:py-12">
@@ -49,7 +52,7 @@ export default function ContractorsPage() {
 
       {/* Filters */}
       <div className="bg-white rounded-xl shadow-sm border p-4 mb-8">
-        <div className="grid sm:grid-cols-4 gap-4">
+        <div className="grid sm:grid-cols-4 lg:grid-cols-5 gap-4">
           <input
             type="text"
             placeholder="Search contractors or services..."
@@ -75,6 +78,18 @@ export default function ContractorsPage() {
           >
             <option value="all">All Cities</option>
             {cities.map(c => <option key={c} value={c}>{c}</option>)}
+          </select>
+          <select
+            value={ownership}
+            onChange={e => setOwnership(e.target.value)}
+            className="w-full px-4 py-2.5 border rounded-lg text-sm bg-white focus:ring-2 focus:ring-blue-500 outline-none"
+          >
+            <option value="all">All Ownership</option>
+            <option value="locally-owned">🏠 Locally Owned</option>
+            <option value="family-owned">👨‍👩‍👧 Family Owned</option>
+            <option value="pe-backed">💼 PE Backed</option>
+            <option value="corporate">🏢 Corporate</option>
+            <option value="franchise">🏪 Franchise</option>
           </select>
           <label className="flex items-center gap-2 cursor-pointer select-none">
             <input
@@ -117,12 +132,15 @@ export default function ContractorsPage() {
               
               <div className="flex items-start justify-between mb-3">
                 <span className="badge-category capitalize">{c.category.replace(/-/g, ' ')}</span>
-                {c.verified && (
-                  <span className="badge-verified">
-                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/></svg>
-                    Verified Local
-                  </span>
-                )}
+                <div className="flex items-center gap-1">
+                  <OwnershipBadge type={c.ownershipType} compact />
+                  {c.verified && (
+                    <span className="badge-verified">
+                      <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/></svg>
+                      Verified
+                    </span>
+                  )}
+                </div>
               </div>
 
               <h3 className="font-bold text-lg group-hover:text-blue-700 transition-colors">{c.name}</h3>
