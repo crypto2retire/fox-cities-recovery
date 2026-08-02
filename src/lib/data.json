@@ -969,7 +969,8 @@
       "rating": 5,
       "comment": "Buckshot replaced our roof after the 2024 hail storm. Professional, fast, and handled insurance directly. Would recommend to anyone.",
       "date": "2026-06-15",
-      "jobType": "Full Roof Replacement"
+      "jobType": "Full Roof Replacement",
+      "source": "google"
     },
     {
       "id": "r2",
@@ -977,7 +978,8 @@
       "authorName": "Lisa R.",
       "rating": 5,
       "comment": "They came out same-day for an emergency tarp after the tornado tore off half our roof. Cannot thank them enough.",
-      "date": "2026-07-28"
+      "date": "2026-07-28",
+      "source": "google"
     },
     {
       "id": "r3",
@@ -985,7 +987,8 @@
       "authorName": "Dave K.",
       "rating": 5,
       "comment": "Infinity did our metal roof 3 years ago. Still looks brand new. Great craftsmanship and honest pricing.",
-      "date": "2026-03-20"
+      "date": "2026-03-20",
+      "source": "google"
     },
     {
       "id": "r4",
@@ -993,7 +996,8 @@
       "authorName": "Sarah M.",
       "rating": 5,
       "comment": "Local Menasha company that really cares about the community. Did our roof and gutters \u2014 perfect job.",
-      "date": "2026-05-10"
+      "date": "2026-05-10",
+      "source": "google"
     },
     {
       "id": "r5",
@@ -1001,7 +1005,8 @@
       "authorName": "Tom H.",
       "rating": 5,
       "comment": "Had a massive oak tree on our house after the tornado. Fox Valley Tree had it off and the yard cleaned up in 4 hours.",
-      "date": "2026-07-29"
+      "date": "2026-07-29",
+      "source": "google"
     },
     {
       "id": "r6",
@@ -1009,7 +1014,8 @@
       "authorName": "Karen W.",
       "rating": 5,
       "comment": "Our insurance offered $12k. Fox Valley Adjusters got us $47k. They know exactly what to document for tornado claims. Worth every penny.",
-      "date": "2026-07-30"
+      "date": "2026-07-30",
+      "source": "google"
     },
     {
       "id": "r7",
@@ -1017,7 +1023,8 @@
       "authorName": "Jim P.",
       "rating": 4,
       "comment": "Responded within 2 hours when our basement flooded from roof damage. Thorough drying and mold prevention.",
-      "date": "2026-07-29"
+      "date": "2026-07-29",
+      "source": "google"
     },
     {
       "id": "r8",
@@ -1025,7 +1032,8 @@
       "authorName": "Rachel D.",
       "rating": 5,
       "comment": "XL handled our entire rebuild after a fire. They're now managing our tornado repairs too. TK and his crew are phenomenal.",
-      "date": "2026-07-31"
+      "date": "2026-07-31",
+      "source": "google"
     }
   ],
   "roofPricing": {

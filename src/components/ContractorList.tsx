@@ -7,11 +7,14 @@ import type { Contractor, ContractorCategory, OwnershipType } from "@/lib";
 import { OwnershipBadge } from "@/components/OwnershipBadge";
 import { AdPlacement } from "@/components/AdPlacement";
 
+export type SortOption = 'credibility' | 'rating' | 'reviews' | 'oldest' | 'newest';
+
 export function ContractorList({ contractors }: { contractors: Contractor[] }) {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<string>("all");
   const [city, setCity] = useState<string>("all");
   const [ownership, setOwnership] = useState<string>("all");
+  const [sort, setSort] = useState<SortOption>("credibility");
   const [showVerifiedOnly, setShowVerifiedOnly] = useState(false);
 
   const cities = useMemo(() => {
@@ -20,7 +23,7 @@ export function ContractorList({ contractors }: { contractors: Contractor[] }) {
   }, [contractors]);
 
   const filtered = useMemo(() => {
-    return contractors.filter(c => {
+    const matched = contractors.filter(c => {
       const matchSearch = search === "" ||
         c.name.toLowerCase().includes(search.toLowerCase()) ||
         c.description.toLowerCase().includes(search.toLowerCase()) ||
@@ -31,7 +34,29 @@ export function ContractorList({ contractors }: { contractors: Contractor[] }) {
       const matchVerified = !showVerifiedOnly || c.verified;
       return matchSearch && matchCategory && matchCity && matchOwnership && matchVerified;
     });
-  }, [search, category, city, ownership, showVerifiedOnly, contractors]);
+
+    // Apply sort
+    const sorted = [...matched];
+    switch (sort) {
+      case 'rating':
+        sorted.sort((a, b) => b.rating - a.rating || b.reviewCount - a.reviewCount);
+        break;
+      case 'reviews':
+        sorted.sort((a, b) => b.reviewCount - a.reviewCount || b.rating - a.rating);
+        break;
+      case 'oldest':
+        sorted.sort((a, b) => a.yearEstablished - b.yearEstablished);
+        break;
+      case 'newest':
+        sorted.sort((a, b) => b.yearEstablished - a.yearEstablished);
+        break;
+      case 'credibility':
+      default:
+        // Already sorted by credibility from the server
+        break;
+    }
+    return sorted;
+  }, [search, category, city, ownership, sort, showVerifiedOnly, contractors]);
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 sm:py-12">
@@ -103,9 +128,20 @@ export function ContractorList({ contractors }: { contractors: Contractor[] }) {
           {filtered.length} contractor{filtered.length !== 1 ? 's' : ''} found
           {contractors.length !== filtered.length && ` (from ${contractors.length} total)`}
         </span>
-        <span className="text-xs text-gray-400" title="Sorted by credibility: combines rating, review count, and years in business. A few 5-star reviews won't outrank hundreds of 4.x reviews.">
-          Sorted by credibility ⓘ
-        </span>
+        <div className="flex items-center gap-2">
+          <label className="text-xs text-gray-400">Sort:</label>
+          <select
+            value={sort}
+            onChange={e => setSort(e.target.value as SortOption)}
+            className="text-xs border rounded-lg px-2 py-1 bg-white text-gray-600 focus:ring-1 focus:ring-blue-400 outline-none"
+          >
+            <option value="credibility">Credibility</option>
+            <option value="rating">Highest Rated</option>
+            <option value="reviews">Most Reviews</option>
+            <option value="oldest">Oldest Businesses</option>
+            <option value="newest">Newest</option>
+          </select>
+        </div>
       </div>
 
       {filtered.length === 0 ? (

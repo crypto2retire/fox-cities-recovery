@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { OwnershipBadge } from "@/components/OwnershipBadge";
 import { AdPlacement } from "@/components/AdPlacement";
+import { ReviewsSection } from "@/components/ReviewsSection";
 
 export function generateStaticParams() {
   return getContractors().map(c => ({ id: c.id }));
@@ -112,30 +113,11 @@ export default async function ContractorDetailPage({
           </div>
 
           {/* Reviews */}
-          <div className="bg-white rounded-xl shadow-sm border p-6">
-            <h2 className="font-bold text-lg mb-4">Customer Reviews</h2>
-            {contractorReviews.length === 0 ? (
-              <p className="text-gray-500 text-sm">No reviews yet. Be the first to review {contractor.name}.</p>
-            ) : (
-              <div className="space-y-4">
-                {contractorReviews.map(review => (
-                  <div key={review.id} className="border-b last:border-b-0 pb-4 last:pb-0">
-                    <div className="flex items-center justify-between mb-2">
-                      <div>
-                        <span className="font-semibold">{review.authorName}</span>
-                        {review.jobType && <span className="text-xs text-gray-500 ml-2">· {review.jobType}</span>}
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <span className="text-amber-500 font-bold">★ {review.rating}</span>
-                        <span className="text-xs text-gray-400">{review.date}</span>
-                      </div>
-                    </div>
-                    <p className="text-gray-700 text-sm">{review.comment}</p>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          <ReviewsSection
+            contractorId={contractor.id}
+            contractorName={contractor.name}
+            initialReviews={contractorReviews}
+          />
         </div>
 
         {/* Sidebar */}

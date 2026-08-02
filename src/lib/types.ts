@@ -90,6 +90,8 @@ export interface Review {
   comment: string;
   date: string;
   jobType?: string;
+  source: 'in-app' | 'google' | 'imported'; // where the review came from
+  verified?: boolean; // verified customer
 }
 
 export interface RoofEstimate {

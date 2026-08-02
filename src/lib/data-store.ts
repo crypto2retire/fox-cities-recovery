@@ -20,6 +20,32 @@ function writeData(data: AppData): void {
   fs.writeFileSync(DATA_PATH, JSON.stringify(data, null, 2));
 }
 
+// Update a contractor's rating/reviewCount to reflect all reviews (Google + in-app)
+function refreshContractorStats(data: AppData, contractorId: string): void {
+  const contractor = data.contractors.find(c => c.id === contractorId);
+  if (!contractor) return;
+
+  const allReviews = data.reviews.filter(r => r.contractorId === contractorId);
+  const googleReviews = allReviews.filter(r => r.source === 'google');
+  const inAppReviews = allReviews.filter(r => r.source === 'in-app');
+
+  // In-app reviews count for credibility scoring
+  contractor.reviewCount = allReviews.length;
+
+  if (allReviews.length === 0) return;
+
+  // Weighted average: Google reviews are imported, in-app are verified
+  // In-app reviews get 1.5× weight in the average (they're verified customers)
+  const googleWeight = googleReviews.length;
+  const inAppWeight = inAppReviews.length * 1.5;
+  const totalWeight = googleWeight + inAppWeight;
+
+  const googleSum = googleReviews.reduce((s, r) => s + r.rating, 0);
+  const inAppSum = inAppReviews.reduce((s, r) => s + r.rating, 0);
+
+  contractor.rating = Math.round(((googleSum * googleWeight + inAppSum * inAppWeight) / Math.max(totalWeight, 1)) * 10) / 10;
+}
+
 // Contractors
 export function getContractors(): Contractor[] {
   return sortByCredibility(readData().contractors);
@@ -66,6 +92,7 @@ export function getAllReviews(): Review[] {
 export function addReview(r: Review): Review {
   const data = readData();
   data.reviews.push(r);
+  refreshContractorStats(data, r.contractorId);
   writeData(data);
   return r;
 }
