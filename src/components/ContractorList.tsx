@@ -98,9 +98,14 @@ export function ContractorList({ contractors }: { contractors: Contractor[] }) {
       </div>
 
       {/* Results */}
-      <div className="mb-4 text-sm text-gray-500">
-        {filtered.length} contractor{filtered.length !== 1 ? 's' : ''} found
-        {contractors.length !== filtered.length && ` (from ${contractors.length} total)`}
+      <div className="mb-4 flex items-center justify-between text-sm text-gray-500">
+        <span>
+          {filtered.length} contractor{filtered.length !== 1 ? 's' : ''} found
+          {contractors.length !== filtered.length && ` (from ${contractors.length} total)`}
+        </span>
+        <span className="text-xs text-gray-400" title="Sorted by credibility: combines rating, review count, and years in business. A few 5-star reviews won't outrank hundreds of 4.x reviews.">
+          Sorted by credibility ⓘ
+        </span>
       </div>
 
       {filtered.length === 0 ? (

@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import type { Contractor, Review, RoofPricingConfig } from './types';
+import { sortByCredibility } from './credibility';
 
 const DATA_PATH = path.join(process.cwd(), 'src/lib/data.json');
 
@@ -21,7 +22,7 @@ function writeData(data: AppData): void {
 
 // Contractors
 export function getContractors(): Contractor[] {
-  return readData().contractors;
+  return sortByCredibility(readData().contractors);
 }
 
 export function getContractorById(id: string): Contractor | undefined {
