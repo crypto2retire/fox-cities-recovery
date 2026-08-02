@@ -3,6 +3,7 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { setOptions, importLibrary } from "@googlemaps/js-api-loader";
 import type { RoofEstimate, RoofPricingConfig } from "@/lib";
+import { AdPlacement } from "@/components/AdPlacement";
 
 // Default pricing (fallback until API loads)
 const DEFAULT_PRICING: RoofPricingConfig = {
@@ -451,14 +452,7 @@ export default function RoofEstimatorPage() {
             </div>
           )}
 
-          {/* Ad slot */}
-          <div className="bg-gradient-to-br from-amber-50 to-yellow-50 rounded-xl border-2 border-dashed border-amber-300 p-5 text-center">
-            <p className="text-xs text-amber-700 font-bold mb-2">ADVERTISEMENT</p>
-            <p className="text-sm text-gray-600 mb-3">Get your roofing company in front of homeowners actively estimating costs.</p>
-            <a href="mailto:ads@foxcitiesrecovery.com" className="text-xs text-amber-700 font-bold hover:underline">
-              Advertise →
-            </a>
-          </div>
+          <AdPlacement />
         </div>
       </div>
 

@@ -70,7 +70,6 @@ export default function AdminDashboard() {
                 <th className="text-left px-4 py-3 font-semibold">Est.</th>
                 <th className="text-left px-4 py-3 font-semibold">Verified</th>
                 <th className="text-left px-4 py-3 font-semibold">Ownership</th>
-                <th className="text-left px-4 py-3 font-semibold">Ad Tier</th>
                 <th className="text-left px-4 py-3 font-semibold">Rating</th>
                 <th className="text-right px-4 py-3 font-semibold">Actions</th>
               </tr>
@@ -84,7 +83,6 @@ export default function AdminDashboard() {
                   <td className="px-4 py-3 text-gray-600">{c.yearEstablished}</td>
                   <td className="px-4 py-3">{c.verified ? '✅' : '❌'}</td>
                   <td className="px-4 py-3 text-xs">{OWNERSHIP_LABELS[c.ownershipType] || '?'}</td>
-                  <td className="px-4 py-3 text-gray-600">{c.advertisingTier || '—'}</td>
                   <td className="px-4 py-3">★ {c.rating}</td>
                   <td className="px-4 py-3 text-right">
                     <div className="flex gap-2 justify-end">

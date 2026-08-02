@@ -27,7 +27,6 @@ export default function NewContractorPage() {
     services: "",
     licenseNumber: "",
     insuranceVerified: true,
-    advertisingTier: "free" as "free" | "featured" | "premium",
     ownershipType: "locally-owned" as OwnershipType,
     ownershipNotes: "",
   });
@@ -59,7 +58,6 @@ export default function NewContractorPage() {
       insuranceVerified: form.insuranceVerified,
       rating: 5,
       reviewCount: 0,
-      advertisingTier: form.advertisingTier,
       ownershipType: form.ownershipType,
       ownershipNotes: form.ownershipNotes,
     };
@@ -146,14 +144,6 @@ export default function NewContractorPage() {
           <div>
             <label className="block text-sm font-medium mb-1">License #</label>
             <input value={form.licenseNumber} onChange={e => update("licenseNumber", e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Ad Tier</label>
-            <select value={form.advertisingTier} onChange={e => update("advertisingTier", e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm bg-white focus:ring-2 focus:ring-blue-500 outline-none">
-              <option value="free">Free</option>
-              <option value="featured">Featured</option>
-              <option value="premium">Premium</option>
-            </select>
           </div>
         </div>
 

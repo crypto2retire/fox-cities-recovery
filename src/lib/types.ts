@@ -18,7 +18,6 @@ export interface Contractor {
   rating: number; // 1-5
   reviewCount: number;
   logo?: string;
-  advertisingTier?: 'free' | 'featured' | 'premium';
   ownershipType: OwnershipType;
   ownershipNotes?: string; // evidence for ownership classification
 }

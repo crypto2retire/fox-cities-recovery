@@ -4,8 +4,6 @@ import { OwnershipBadge } from "@/components/OwnershipBadge";
 
 export default function Home() {
   const contractors = getContractors();
-  const featuredContractors = contractors.filter(c => c.advertisingTier === 'premium');
-  const roofers = contractors.filter(c => c.category === 'roofing').slice(0, 3);
 
   return (
     <>
@@ -71,15 +69,15 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Featured Contractors */}
+      {/* Sample Contractors */}
       <section className="py-16">
         <div className="max-w-5xl mx-auto px-4">
           <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl sm:text-3xl font-bold">Featured Local Contractors</h2>
-            <Link href="/contractors" className="text-blue-600 hover:text-blue-800 font-medium text-sm">View All →</Link>
+            <h2 className="text-2xl sm:text-3xl font-bold">Local Contractors</h2>
+            <Link href="/contractors" className="text-blue-600 hover:text-blue-800 font-medium text-sm">View All 38 →</Link>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredContractors.slice(0, 4).map(c => (
+            {contractors.slice(0, 6).map(c => (
               <Link key={c.id} href={`/contractors/${c.id}`} className="card group">
                 <div className="flex items-start justify-between mb-3">
                   <span className="badge-category">{c.category.replace('-', ' ')}</span>
@@ -111,15 +109,16 @@ export default function Home() {
         <div className="max-w-3xl mx-auto px-4">
           <h2 className="text-2xl sm:text-3xl font-bold mb-4">Are you a local contractor?</h2>
           <p className="text-blue-200 mb-8 max-w-xl mx-auto">
-            If your business was established in the Fox Cities before July 27, 2026, list your services for free. 
-            Premium placements available to reach tornado victims who need your help.
+            If your business was established in the Fox Cities before July 27, 2026, get listed for free. 
+            Every local business gets equal visibility — no paid rankings.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="mailto:listings@foxcitiesrecovery.com" className="btn-accent">Get Listed (Free)</a>
+            <a href="mailto:listings@foxcitiesrecovery.com" className="btn-accent">Get Listed — Free</a>
             <a href="mailto:ads@foxcitiesrecovery.com" className="bg-white/10 hover:bg-white/20 border border-white/30 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
               Advertise Here
             </a>
           </div>
+          <p className="text-xs text-blue-300 mt-4">Listings are always free. Advertisements are separate and clearly labeled.</p>
         </div>
       </section>
     </>

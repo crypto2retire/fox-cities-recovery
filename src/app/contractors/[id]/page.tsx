@@ -2,6 +2,7 @@ import { getContractors, getContractorById, getReviewsForContractor } from "@/li
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { OwnershipBadge } from "@/components/OwnershipBadge";
+import { AdPlacement } from "@/components/AdPlacement";
 
 export function generateStaticParams() {
   return getContractors().map(c => ({ id: c.id }));
@@ -176,13 +177,7 @@ export default async function ContractorDetailPage({
           </div>
 
           {/* Ad slot */}
-          <div className="bg-gradient-to-br from-amber-50 to-yellow-50 rounded-xl border-2 border-dashed border-amber-300 p-5 text-center">
-            <p className="text-xs text-amber-700 font-bold mb-2">ADVERTISEMENT</p>
-            <p className="text-sm text-gray-600 mb-3">Want your business here? Reach local homeowners actively looking for contractors.</p>
-            <a href="mailto:ads@foxcitiesrecovery.com" className="text-xs text-amber-700 font-bold hover:underline">
-              Advertise →
-            </a>
-          </div>
+          <AdPlacement />
         </div>
       </div>
     </div>

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { CATEGORY_LABELS, OWNERSHIP_LABELS } from "@/lib";
 import type { Contractor, ContractorCategory, OwnershipType } from "@/lib";
 import { OwnershipBadge } from "@/components/OwnershipBadge";
+import { AdPlacement } from "@/components/AdPlacement";
 
 export function ContractorList({ contractors }: { contractors: Contractor[] }) {
   const [search, setSearch] = useState("");
@@ -112,18 +113,6 @@ export function ContractorList({ contractors }: { contractors: Contractor[] }) {
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filtered.map(c => (
             <Link key={c.id} href={`/contractors/${c.id}`} className="card group">
-              {/* Ad tier badge */}
-              {c.advertisingTier && (
-                <div className="flex items-center gap-2 mb-2">
-                  {c.advertisingTier === 'premium' && (
-                    <span className="bg-amber-100 text-amber-800 text-xs font-bold px-2 py-0.5 rounded">★ PREMIUM</span>
-                  )}
-                  {c.advertisingTier === 'featured' && (
-                    <span className="bg-blue-100 text-blue-800 text-xs font-bold px-2 py-0.5 rounded">FEATURED</span>
-                  )}
-                </div>
-              )}
-
               <div className="flex items-start justify-between mb-3">
                 <span className="badge-category capitalize">{c.category.replace(/-/g, ' ')}</span>
                 <div className="flex items-center gap-1">
@@ -163,15 +152,9 @@ export function ContractorList({ contractors }: { contractors: Contractor[] }) {
         </div>
       )}
 
-      {/* Ad slots for contractors */}
-      <div className="mt-16 bg-gradient-to-r from-blue-50 to-amber-50 rounded-xl border-2 border-dashed border-blue-200 p-8 text-center">
-        <h3 className="text-xl font-bold mb-2">📢 Advertise Your Business Here</h3>
-        <p className="text-gray-600 mb-4 max-w-lg mx-auto">
-          Reach Fox Cities homeowners who need your services right now. Premium and featured placements available for verified local businesses.
-        </p>
-        <a href="mailto:ads@foxcitiesrecovery.com" className="btn-primary">
-          Learn About Advertising
-        </a>
+      {/* Ad zone — clearly separated from listings */}
+      <div className="mt-16">
+        <AdPlacement variant="banner" />
       </div>
     </div>
   );
