@@ -2,8 +2,14 @@
 
 import { useState, useCallback, useRef, useEffect } from "react";
 import { setOptions, importLibrary } from "@googlemaps/js-api-loader";
-import { roofPricing } from "@/lib/contractors";
-import type { RoofEstimate } from "@/lib";
+import type { RoofEstimate, RoofPricingConfig } from "@/lib";
+
+// Default pricing (fallback until API loads)
+const DEFAULT_PRICING: RoofPricingConfig = {
+  materialPerSqFt: { low: 2.80, high: 5.50 },
+  laborPerSqFt: { low: 1.80, high: 3.50 },
+  removalPerSqFt: { low: 0.40, high: 0.55 },
+};
 
 // Default to Menasha, WI
 const DEFAULT_CENTER = { lat: 44.2022, lng: -88.4465 };
@@ -32,6 +38,7 @@ export default function RoofEstimatorPage() {
   const [mapError, setMapError] = useState<string | null>(null);
   const [address, setAddress] = useState("");
   const [geocoderError, setGeocoderError] = useState<string | null>(null);
+  const [pricing, setPricing] = useState<RoofPricingConfig>(DEFAULT_PRICING);
 
   // Refs that need to persist across renders without triggering re-renders
   const polygonRef = useRef<google.maps.Polygon | null>(null);
@@ -39,6 +46,14 @@ export default function RoofEstimatorPage() {
   const clickListenerRef = useRef<google.maps.MapsEventListener | null>(null);
   const verticesRef = useRef<google.maps.LatLng[]>([]);
   const drawingLineRef = useRef<google.maps.Polyline | null>(null);
+
+  // Fetch pricing from API
+  useEffect(() => {
+    fetch("/api/pricing")
+      .then(r => r.json())
+      .then(data => setPricing(data))
+      .catch(() => {}); // use defaults on failure
+  }, []);
 
   // Load map
   useEffect(() => {
@@ -89,7 +104,7 @@ export default function RoofEstimatorPage() {
     const adjustedArea = areaSqFt * pf;
     const squares = adjustedArea / 100;
 
-    const p = roofPricing;
+    const p = pricing;
 
     setEstimate({
       areaSqFt: Math.round(adjustedArea),
@@ -104,7 +119,7 @@ export default function RoofEstimatorPage() {
       totalHigh: Math.round(adjustedArea * (p.materialPerSqFt.high + p.laborPerSqFt.high + p.removalPerSqFt.high)),
       pitchFactor: pf,
     });
-  }, [areaSqMeters, roofPitch]);
+  }, [areaSqMeters, roofPitch, pricing]);
 
   const updateArea = useCallback((vertices: google.maps.LatLng[]) => {
     if (vertices.length >= 3) {

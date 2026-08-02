@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { contractors } from "@/lib/contractors";
+import { getContractors } from "@/lib/data-store";
 
 export default function Home() {
+  const contractors = getContractors();
   const featuredContractors = contractors.filter(c => c.advertisingTier === 'premium');
   const roofers = contractors.filter(c => c.category === 'roofing').slice(0, 3);
 

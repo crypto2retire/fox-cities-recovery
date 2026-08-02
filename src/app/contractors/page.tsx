@@ -1,15 +1,22 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
-import { contractors, CATEGORY_LABELS } from "@/lib";
-import type { ContractorCategory } from "@/lib";
+import { CATEGORY_LABELS } from "@/lib";
+import type { Contractor, ContractorCategory } from "@/lib";
 
 export default function ContractorsPage() {
+  const [contractors, setContractors] = useState<Contractor[]>([]);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<string>("all");
   const [city, setCity] = useState<string>("all");
   const [showVerifiedOnly, setShowVerifiedOnly] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/contractors")
+      .then(r => r.json())
+      .then(data => setContractors(data));
+  }, []);
 
   const cities = useMemo(() => {
     const unique = [...new Set(contractors.map(c => c.city))].sort();

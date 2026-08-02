@@ -1,9 +1,9 @@
-import { contractors, getReviewsForContractor } from "@/lib/contractors";
+import { getContractors, getContractorById, getReviewsForContractor } from "@/lib/data-store";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
 export function generateStaticParams() {
-  return contractors.map(c => ({ id: c.id }));
+  return getContractors().map(c => ({ id: c.id }));
 }
 
 export default async function ContractorDetailPage({
@@ -12,7 +12,7 @@ export default async function ContractorDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const contractor = contractors.find(c => c.id === id);
+  const contractor = getContractorById(id);
   
   if (!contractor) notFound();
   
