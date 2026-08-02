@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: fox-cities-recovery
+    env: node
+    region: ohio
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    plan: free
+    envVars:
+      - key: NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
+        sync: false
+    autoDeploy: true
