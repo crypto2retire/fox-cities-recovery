@@ -13,10 +13,10 @@ export interface Contractor {
   verified: boolean; // manually verified as local pre-storm business
   description: string;
   services: string[];
-  licenseNumber?: string;
+  licenseNumber?: string; // verified via WI DSPS — never fabricated
   insuranceVerified: boolean;
-  rating: number; // 1-5
-  reviewCount: number;
+  rating: number | null; // null = no verified rating yet
+  reviewCount: number | null; // null = no verified review count yet
   logo?: string;
   ownershipType: OwnershipType;
   ownershipNotes?: string; // evidence for ownership classification

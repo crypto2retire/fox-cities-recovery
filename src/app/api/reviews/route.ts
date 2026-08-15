@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAllReviews, addReview, deleteReview, getContractors } from '@/lib/data-store';
 import { checkForFraud, sanitizeReviews } from '@/lib/fraud-detection';
+import { isAdminRequest } from '@/lib/auth';
 import type { Review } from '@/lib/types';
 
 export async function GET() {
@@ -8,6 +9,7 @@ export async function GET() {
   return NextResponse.json(sanitizeReviews(reviews));
 }
 
+// Public — anyone can submit a review (that's the point). Fraud detection runs here.
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -15,7 +17,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    // Run fraud detection
     const allContractors = getContractors().map(c => ({ id: c.id, name: c.name }));
     const existingReviews = getAllReviews().filter(r => r.contractorId === body.contractorId);
     const fraudResult = checkForFraud(body, existingReviews, allContractors);
@@ -28,7 +29,6 @@ export async function POST(request: NextRequest) {
 
     const saved = addReview(review);
 
-    // Return sanitized version (no private fields)
     const { contactEmail, contactPhone, ...safe } = saved;
     return NextResponse.json(safe, { status: 201 });
   } catch {
@@ -36,7 +36,10 @@ export async function POST(request: NextRequest) {
   }
 }
 
+// Admin only — deleting reviews requires auth.
 export async function DELETE(request: NextRequest) {
+  const authorized = await isAdminRequest(request.headers.get('cookie'));
+  if (!authorized) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   const { searchParams } = new URL(request.url);
   const id = searchParams.get('id');
   if (!id) return NextResponse.json({ error: 'Missing id' }, { status: 400 });

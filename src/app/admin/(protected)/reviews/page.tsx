@@ -14,10 +14,6 @@ export default function AdminReviewsPage() {
   const router = useRouter();
 
   useEffect(() => {
-    if (typeof window !== "undefined" && sessionStorage.getItem("admin-auth") !== "true") {
-      router.push("/admin/login");
-      return;
-    }
     Promise.all([
       fetch("/api/reviews").then(r => r.json()),
       fetch("/api/contractors").then(r => r.json()),

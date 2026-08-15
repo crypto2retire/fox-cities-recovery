@@ -6,17 +6,29 @@ import { useRouter } from "next/navigation";
 export default function AdminLoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simple password check — the admin password is set via ADMIN_PASSWORD env var
-    // For the client, we store a token in sessionStorage
-    if (password === "fcr-admin-2026" || password === "admin") {
-      sessionStorage.setItem("admin-auth", "true");
-      router.push("/admin");
-    } else {
-      setError("Invalid password");
+    setLoading(true);
+    setError("");
+
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password }),
+      });
+      if (res.ok) {
+        router.push("/admin");
+      } else {
+        setError("Invalid password");
+      }
+    } catch {
+      setError("Network error. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -37,13 +49,10 @@ export default function AdminLoginPage() {
             />
           </div>
           {error && <p className="text-red-600 text-sm">{error}</p>}
-          <button type="submit" className="w-full btn-primary">
-            Sign In
+          <button type="submit" disabled={loading} className="w-full btn-primary">
+            {loading ? "Signing in..." : "Sign In"}
           </button>
         </form>
-        <p className="text-xs text-gray-400 text-center mt-4">
-          Default password: <code className="bg-gray-100 px-1 rounded">fcr-admin-2026</code>
-        </p>
       </div>
     </div>
   );

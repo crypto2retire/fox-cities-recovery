@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { updateReview } from '@/lib/data-store';
+import { isAdminRequest } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
+  const authorized = await isAdminRequest(request.headers.get('cookie'));
+  if (!authorized) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   try {
     const body = await request.json();
     const { reviewId, businessResponse, businessResponseDate } = body;
@@ -12,7 +15,6 @@ export async function POST(request: NextRequest) {
     if (!updated) {
       return NextResponse.json({ error: 'Review not found' }, { status: 404 });
     }
-    // Return sanitized
     const { contactEmail, contactPhone, ...safe } = updated;
     return NextResponse.json(safe);
   } catch {

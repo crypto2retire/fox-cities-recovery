@@ -31,7 +31,10 @@ function refreshContractorStats(data: AppData, contractorId: string): void {
   // In-app reviews count for credibility scoring
   contractor.reviewCount = allReviews.length;
 
-  if (allReviews.length === 0) return;
+  if (allReviews.length === 0) {
+    contractor.rating = null;
+    return;
+  }
 
   // Weighted average: Google reviews are imported, in-app are verified
   // In-app reviews get 1.5× weight in the average (they're verified customers)

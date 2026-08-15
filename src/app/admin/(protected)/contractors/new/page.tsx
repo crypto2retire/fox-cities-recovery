@@ -31,12 +31,6 @@ export default function NewContractorPage() {
     ownershipNotes: "",
   });
 
-  useEffect(() => {
-    if (typeof window !== "undefined" && sessionStorage.getItem("admin-auth") !== "true") {
-      router.push("/admin/login");
-    }
-  }, [router]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
@@ -56,8 +50,8 @@ export default function NewContractorPage() {
       services: form.services.split(',').map(s => s.trim()).filter(Boolean),
       licenseNumber: form.licenseNumber || undefined,
       insuranceVerified: form.insuranceVerified,
-      rating: 5,
-      reviewCount: 0,
+      rating: null,
+      reviewCount: null,
       ownershipType: form.ownershipType,
       ownershipNotes: form.ownershipNotes,
     };

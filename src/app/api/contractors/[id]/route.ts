@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getContractorById, updateContractor, deleteContractor } from '@/lib/data-store';
+import { isAdminRequest } from '@/lib/auth';
 
 export async function GET(
   _request: NextRequest,
@@ -15,6 +16,8 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const authorized = await isAdminRequest(request.headers.get('cookie'));
+  if (!authorized) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   const { id } = await params;
   try {
     const body = await request.json();
@@ -27,9 +30,11 @@ export async function PUT(
 }
 
 export async function DELETE(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const authorized = await isAdminRequest(request.headers.get('cookie'));
+  if (!authorized) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   const { id } = await params;
   const deleted = deleteContractor(id);
   if (!deleted) return NextResponse.json({ error: 'Not found' }, { status: 404 });

@@ -13,11 +13,6 @@ export default function AdminDashboard() {
   const router = useRouter();
 
   useEffect(() => {
-    if (typeof window !== "undefined" && sessionStorage.getItem("admin-auth") !== "true") {
-      router.push("/admin/login");
-      return;
-    }
-
     Promise.all([
       fetch("/api/contractors").then(r => r.json()),
       fetch("/api/reviews").then(r => r.json()),
@@ -26,7 +21,7 @@ export default function AdminDashboard() {
       setReviews(r);
       setLoading(false);
     });
-  }, [router]);
+  }, []);
 
   const handleDelete = async (id: string) => {
     if (!confirm("Delete this contractor? This cannot be undone.")) return;
@@ -83,7 +78,7 @@ export default function AdminDashboard() {
                   <td className="px-4 py-3 text-gray-600">{c.yearEstablished}</td>
                   <td className="px-4 py-3">{c.verified ? '✅' : '❌'}</td>
                   <td className="px-4 py-3 text-xs">{OWNERSHIP_LABELS[c.ownershipType] || '?'}</td>
-                  <td className="px-4 py-3">★ {c.rating}</td>
+                  <td className="px-4 py-3">{c.rating != null ? `★ ${c.rating}` : '—'}</td>
                   <td className="px-4 py-3 text-right">
                     <div className="flex gap-2 justify-end">
                       <Link
@@ -115,7 +110,7 @@ export default function AdminDashboard() {
           <p className="text-xs text-gray-500 mt-1">Add a new verified local business</p>
         </Link>
         <button
-          onClick={() => { sessionStorage.removeItem("admin-auth"); router.push("/admin/login"); }}
+          onClick={async () => { await fetch("/api/auth/logout", { method: "POST" }); router.push("/admin/login"); }}
           className="card text-center hover:border-red-300 w-full"
         >
           <div className="text-3xl mb-2">🚪</div>

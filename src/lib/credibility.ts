@@ -2,21 +2,15 @@ import type { Contractor } from './types';
 
 /**
  * Bayesian credibility score for ranking contractors fairly.
- * 
+ *
  * Philosophy:
  * - A contractor with 1 five-star review shouldn't outrank one with 200 reviews at 4.7
  * - Longevity matters — 30 years in business beats 2 years
  * - Pure sort by rating punishes honest contractors who have more (and slightly lower) reviews
  *
- * Formula:
- *   bayesian_rating = (r * n + M * C) / (n + C)
- *   credibility = bayesian_rating × log₂(n + 1) × longevity_bonus
- *
- * Where:
- *   r = contractor's average rating
- *   n = number of reviews
- *   M = global mean rating (prior)
- *   C = confidence weight (reviews needed to overcome prior)
+ * When rating/reviewCount are null (no verified rating yet), the contractor is ranked
+ * by longevity (years in business) only — real, verified data. This is the honest
+ * fallback until Google Places ratings are imported.
  */
 
 const GLOBAL_MEAN = 4.5; // Average rating across all contractors
@@ -25,17 +19,22 @@ const CONFIDENCE = 10;    // Reviews needed before rating is taken at face value
 export function computeCredibilityScore(contractor: Contractor): number {
   const { rating, reviewCount, yearEstablished } = contractor;
 
+  const yearsInBusiness = new Date().getFullYear() - yearEstablished;
+
+  // No verified rating yet — rank by longevity only.
+  if (rating == null || reviewCount == null) {
+    return Math.max(yearsInBusiness, 0);
+  }
+
   // Bayesian weighted rating — prevents small-sample inflation
   const bayesianRating =
     (rating * reviewCount + GLOBAL_MEAN * CONFIDENCE) /
     (reviewCount + CONFIDENCE);
 
-  // Review volume weight — log scale so 200 reviews isn't 200× more than 1 review,
-  // but still gives meaningful advantage to well-reviewed contractors
+  // Review volume weight — log scale so 200 reviews isn't 200× more than 1 review
   const volumeWeight = Math.log2(reviewCount + 1);
 
   // Longevity bonus — each year in business adds ~1% up to 30% max
-  const yearsInBusiness = new Date().getFullYear() - yearEstablished;
   const longevityBonus = 1 + Math.min(yearsInBusiness, 30) / 100;
 
   return bayesianRating * volumeWeight * longevityBonus;
@@ -54,10 +53,15 @@ export function sortByCredibility(contractors: Contractor[]): Contractor[] {
  */
 export function explainScore(contractor: Contractor): string {
   const { rating, reviewCount, yearEstablished } = contractor;
+  const yearsInBusiness = new Date().getFullYear() - yearEstablished;
+
+  if (rating == null || reviewCount == null) {
+    return `${yearsInBusiness} years in business · rating not yet verified`;
+  }
+
   const bayesianRating =
     (rating * reviewCount + GLOBAL_MEAN * CONFIDENCE) /
     (reviewCount + CONFIDENCE);
-  const yearsInBusiness = new Date().getFullYear() - yearEstablished;
   const score = computeCredibilityScore(contractor);
 
   const parts: string[] = [];

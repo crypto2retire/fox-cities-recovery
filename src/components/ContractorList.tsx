@@ -37,12 +37,13 @@ export function ContractorList({ contractors }: { contractors: Contractor[] }) {
 
     // Apply sort
     const sorted = [...matched];
+    const ratingOrNull = (v: number | null) => v ?? -1;
     switch (sort) {
       case 'rating':
-        sorted.sort((a, b) => b.rating - a.rating || b.reviewCount - a.reviewCount);
+        sorted.sort((a, b) => ratingOrNull(b.rating) - ratingOrNull(a.rating) || (b.reviewCount ?? 0) - (a.reviewCount ?? 0));
         break;
       case 'reviews':
-        sorted.sort((a, b) => b.reviewCount - a.reviewCount || b.rating - a.rating);
+        sorted.sort((a, b) => (b.reviewCount ?? 0) - (a.reviewCount ?? 0) || ratingOrNull(b.rating) - ratingOrNull(a.rating));
         break;
       case 'oldest':
         sorted.sort((a, b) => a.yearEstablished - b.yearEstablished);
@@ -183,8 +184,14 @@ export function ContractorList({ contractors }: { contractors: Contractor[] }) {
 
               <div className="flex items-center justify-between mt-4 pt-3 border-t">
                 <div className="flex items-center gap-1">
-                  <span className="text-amber-500 font-bold">★ {c.rating}</span>
-                  <span className="text-xs text-gray-400">({c.reviewCount})</span>
+                  {c.rating != null ? (
+                    <>
+                      <span className="text-amber-500 font-bold">★ {c.rating}</span>
+                      <span className="text-xs text-gray-400">({c.reviewCount})</span>
+                    </>
+                  ) : (
+                    <span className="text-xs text-gray-400">No rating yet</span>
+                  )}
                 </div>
                 <span className="text-sm text-blue-600 font-medium group-hover:underline">View Details →</span>
               </div>

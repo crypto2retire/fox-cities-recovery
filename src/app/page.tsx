@@ -95,8 +95,14 @@ export default function Home() {
                 <p className="text-sm text-gray-500 mt-1">{c.city}, WI · Est. {c.yearEstablished}</p>
                 <p className="text-sm text-gray-600 mt-3 line-clamp-2">{c.description}</p>
                 <div className="flex items-center gap-2 mt-4 text-sm">
-                  <span className="text-amber-500 font-bold">★ {c.rating}</span>
-                  <span className="text-gray-400">({c.reviewCount} reviews)</span>
+                  {c.rating != null ? (
+                    <>
+                      <span className="text-amber-500 font-bold">★ {c.rating}</span>
+                      <span className="text-gray-400">({c.reviewCount} reviews)</span>
+                    </>
+                  ) : (
+                    <span className="text-gray-400">Est. {c.yearEstablished} · No rating yet</span>
+                  )}
                 </div>
               </Link>
             ))}

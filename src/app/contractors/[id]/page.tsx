@@ -51,17 +51,20 @@ export default async function ContractorDetailPage({
         {/* Rating */}
         <div className="flex items-center gap-3 mt-6">
           <div className="flex items-center gap-1">
-            <span className="text-3xl font-bold text-amber-500">★ {contractor.rating}</span>
-            <span className="text-gray-400 text-sm">({contractor.reviewCount} reviews)</span>
+            {contractor.rating != null ? (
+              <>
+                <span className="text-3xl font-bold text-amber-500">★ {contractor.rating}</span>
+                <span className="text-gray-400 text-sm">({contractor.reviewCount} reviews)</span>
+              </>
+            ) : (
+              <span className="text-gray-400 text-sm">Rating not yet verified</span>
+            )}
           </div>
           {contractor.insuranceVerified && (
             <span className="badge-verified text-sm">
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/></svg>
               Insurance Verified
             </span>
-          )}
-          {contractor.licenseNumber && (
-            <span className="text-xs text-gray-500">License: {contractor.licenseNumber}</span>
           )}
         </div>
       </div>

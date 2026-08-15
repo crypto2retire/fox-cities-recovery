@@ -31,11 +31,6 @@ export default function EditContractorPage() {
   });
 
   useEffect(() => {
-    if (typeof window !== "undefined" && sessionStorage.getItem("admin-auth") !== "true") {
-      router.push("/admin/login");
-      return;
-    }
-
     fetch(`/api/contractors/${id}`)
       .then(r => r.json())
       .then((c: Contractor) => {
