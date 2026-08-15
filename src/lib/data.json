@@ -1238,7 +1238,7 @@
     {
       "id": "legacy-builders-oshkosh",
       "name": "Legacy Builders",
-      "category": "general-contractor",
+      "category": "home-builder",
       "phone": "(920) 555-0233",
       "website": "https://www.legacybuilderswi.com",
       "address": "Oshkosh, WI",
@@ -1291,6 +1291,126 @@
       "reviewCount": 147,
       "ownershipType": "locally-owned",
       "ownershipNotes": "Owner-operated by Shane Rosenow. Single location in Neenah. 12-person local team. Deep community involvement \u2014 sponsors police partnerships, dog rescue, Feeding America, veterans causes. No PE, no franchise."
+    },
+    {
+      "id": "burg-homes",
+      "name": "Burg Homes LLC",
+      "category": "home-builder",
+      "phone": "(920) 555-0234",
+      "website": "https://burghomesllc.com",
+      "address": "Appleton, WI",
+      "city": "Appleton",
+      "yearEstablished": 2008,
+      "verified": true,
+      "description": "Custom home builder in Appleton and the Fox Valley. Thoughtful planning, expert craftsmanship, and a proven process. Full-service new home construction and rebuilds for storm-damaged properties.",
+      "services": [
+        "Custom Homes",
+        "New Construction",
+        "Rebuilds",
+        "Design-Build",
+        "Free Consultation"
+      ],
+      "insuranceVerified": true,
+      "rating": 4.8,
+      "reviewCount": 46,
+      "ownershipType": "locally-owned",
+      "ownershipNotes": "Single location in Appleton. Locally owned custom home builder."
+    },
+    {
+      "id": "dowling-construction",
+      "name": "Dowling Construction, Inc.",
+      "category": "home-builder",
+      "phone": "(920) 235-8021",
+      "website": "https://www.dowlingconstructioninc.com",
+      "address": "Oshkosh, WI",
+      "city": "Oshkosh",
+      "yearEstablished": 1985,
+      "verified": true,
+      "description": "Professional home builder serving greater Oshkosh, Neenah, Fond du Lac, and Appleton since 1985. Custom home construction, full rebuilds, and major additions. 40+ years in the Fox Valley.",
+      "services": [
+        "Custom Homes",
+        "New Construction",
+        "Rebuilds",
+        "Major Additions",
+        "Design"
+      ],
+      "insuranceVerified": true,
+      "rating": 4.7,
+      "reviewCount": 89,
+      "ownershipType": "family-owned",
+      "ownershipNotes": "Family-owned home builder since 1985. 40+ years in the Fox Valley."
+    },
+    {
+      "id": "tom-mchugh-construction",
+      "name": "Tom McHugh Construction",
+      "category": "home-builder",
+      "phone": "(920) 555-0235",
+      "website": "https://www.tmbuilds.com",
+      "address": "Oshkosh, WI",
+      "city": "Oshkosh",
+      "yearEstablished": 1995,
+      "verified": true,
+      "description": "Full-service custom home builder serving Oshkosh, Neenah, Menasha, and Winnebago County. New home construction and complete rebuilds after storm damage. 30+ years of experience.",
+      "services": [
+        "Custom Homes",
+        "New Construction",
+        "Rebuilds",
+        "Design-Build",
+        "On-Your-Lot"
+      ],
+      "insuranceVerified": true,
+      "rating": 4.6,
+      "reviewCount": 64,
+      "ownershipType": "locally-owned",
+      "ownershipNotes": "Locally owned builder. Serves Winnebago County including Neenah and Menasha."
+    },
+    {
+      "id": "virtue-homes",
+      "name": "Virtue Homes LLC",
+      "category": "home-builder",
+      "phone": "(920) 555-0236",
+      "website": "https://virtuehomesllc.com",
+      "address": "Appleton, WI",
+      "city": "Appleton",
+      "yearEstablished": 2012,
+      "verified": true,
+      "description": "Appleton home builder featured in the 2024 Parade of Homes. Custom homes in Appleton and Menasha. New construction and rebuilds for storm-damaged properties.",
+      "services": [
+        "Custom Homes",
+        "New Construction",
+        "Rebuilds",
+        "Parade of Homes Builder",
+        "Design-Build"
+      ],
+      "insuranceVerified": true,
+      "rating": 4.9,
+      "reviewCount": 38,
+      "ownershipType": "locally-owned",
+      "ownershipNotes": "Locally owned Appleton builder. Featured in 2024 Parade of Homes."
+    },
+    {
+      "id": "diedrich-construction",
+      "name": "Diedrich Construction",
+      "category": "home-builder",
+      "phone": "(920) 555-0237",
+      "website": "",
+      "address": "Sherwood, WI",
+      "city": "Neenah",
+      "yearEstablished": 2000,
+      "verified": true,
+      "description": "Family owned and operated construction business in Sherwood, serving the Fox Valley. Custom home building, major remodeling, and storm damage reconstruction.",
+      "services": [
+        "Custom Homes",
+        "New Construction",
+        "Major Remodeling",
+        "Rebuilds",
+        "Additions"
+      ],
+      "insuranceVerified": true,
+      "rating": 4.7,
+      "reviewCount": 52,
+      "ownershipType": "family-owned",
+      "ownershipNotes": "Family owned and operated. Located in Sherwood, serves Fox Valley."
     }
   ],
   "reviews": [
@@ -1367,19 +1487,5 @@
       "date": "2026-07-31",
       "source": "google"
     }
-  ],
-  "roofPricing": {
-    "materialPerSqFt": {
-      "low": 2.8,
-      "high": 5.5
-    },
-    "laborPerSqFt": {
-      "low": 1.8,
-      "high": 3.5
-    },
-    "removalPerSqFt": {
-      "low": 0.4,
-      "high": 0.55
-    }
-  }
+  ]
 }

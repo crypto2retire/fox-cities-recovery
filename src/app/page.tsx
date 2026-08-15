@@ -15,15 +15,15 @@ export default function Home() {
             Fox Cities Tornado<br className="sm:hidden" /> Recovery Resources
           </h1>
           <p className="text-lg sm:text-xl text-blue-200 mb-8 max-w-2xl mx-auto">
-            Free tools to help Menasha, Appleton, and Fox Crossing residents recover from the July 27 EF-3 tornado. 
-            Find verified local contractors, estimate repair costs, and connect with your community.
+            Free tools to help Menasha, Appleton, and Fox Crossing residents recover from the July 27 EF-3 tornado —
+            from emergency cleanup to full rebuild and new home construction.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/contractors" className="btn-accent text-lg">
               🔨 Find Local Contractors
             </Link>
-            <Link href="/estimator" className="btn-primary bg-white/10 hover:bg-white/20 border border-white/30 text-lg">
-              📐 Estimate Roof Costs
+            <Link href="/resources" className="btn-primary bg-white/10 hover:bg-white/20 border border-white/30 text-lg">
+              🆘 Recovery Resources
             </Link>
           </div>
           <p className="text-sm text-blue-300 mt-6">
@@ -56,7 +56,7 @@ export default function Home() {
           <div className="grid sm:grid-cols-3 gap-8">
             {[
               { icon: "🔍", title: "Find Verified Locals", desc: "Every contractor listed had a physical presence in the Fox Cities before the storm. No storm chasers — just your neighbors." },
-              { icon: "📐", title: "Estimate Roof Costs", desc: "Use satellite imagery to measure your roof and get instant Wisconsin-specific cost estimates for materials and labor." },
+              { icon: "🏗️", title: "Every Stage of Recovery", desc: "Cleanup, debris removal, repairs, structural work, and full rebuilds. Find the right local pro for wherever you are in the process." },
               { icon: "⭐", title: "Read Real Reviews", desc: "Reviews from actual local customers. See who your neighbors trust before you hire." },
             ].map(item => (
               <div key={item.title} className="card text-center">
@@ -74,7 +74,7 @@ export default function Home() {
         <div className="max-w-5xl mx-auto px-4">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-2xl sm:text-3xl font-bold">Local Contractors</h2>
-            <Link href="/contractors" className="text-blue-600 hover:text-blue-800 font-medium text-sm">View All 38 →</Link>
+            <Link href="/contractors" className="text-blue-600 hover:text-blue-800 font-medium text-sm">View All {contractors.length} →</Link>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {contractors.slice(0, 6).map(c => (
@@ -109,7 +109,7 @@ export default function Home() {
         <div className="max-w-3xl mx-auto px-4">
           <h2 className="text-2xl sm:text-3xl font-bold mb-4">Are you a local contractor?</h2>
           <p className="text-blue-200 mb-8 max-w-xl mx-auto">
-            If your business was established in the Fox Cities before July 27, 2026, get listed for free. 
+            If your business was established in the Fox Cities before July 27, 2026, get listed for free.
             Every local business gets equal visibility — no paid rankings.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">

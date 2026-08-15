@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import type { Contractor, Review, RoofPricingConfig } from './types';
+import type { Contractor, Review } from './types';
 import { sortByCredibility } from './credibility';
 
 const DATA_PATH = path.join(process.cwd(), 'src/lib/data.json');
@@ -8,7 +8,6 @@ const DATA_PATH = path.join(process.cwd(), 'src/lib/data.json');
 interface AppData {
   contractors: Contractor[];
   reviews: Review[];
-  roofPricing: RoofPricingConfig;
 }
 
 function readData(): AppData {
@@ -115,18 +114,6 @@ export function deleteReview(id: string): boolean {
   return true;
 }
 
-// Pricing
-export function getRoofPricing(): RoofPricingConfig {
-  return readData().roofPricing;
-}
-
-export function updateRoofPricing(pricing: RoofPricingConfig): RoofPricingConfig {
-  const data = readData();
-  data.roofPricing = pricing;
-  writeData(data);
-  return pricing;
-}
-
 // Categories
 export { CATEGORY_LABELS } from './types';
-export type { Contractor, ContractorCategory, Review, RoofEstimate, RoofPricingConfig } from './types';
+export type { Contractor, ContractorCategory, Review } from './types';

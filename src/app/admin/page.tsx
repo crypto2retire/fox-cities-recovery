@@ -52,9 +52,6 @@ export default function AdminDashboard() {
           <Link href="/admin/reviews" className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg text-sm transition-colors">
             Reviews
           </Link>
-          <Link href="/admin/pricing" className="bg-gray-700 hover:bg-gray-800 text-white font-semibold py-2 px-4 rounded-lg text-sm transition-colors">
-            Pricing
-          </Link>
           <Link href="/" className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg text-sm transition-colors">
             View Site
           </Link>
@@ -111,16 +108,11 @@ export default function AdminDashboard() {
       </div>
 
       {/* Quick links */}
-      <div className="mt-8 grid sm:grid-cols-3 gap-4">
+      <div className="mt-8 grid sm:grid-cols-2 gap-4">
         <Link href="/admin/contractors/new" className="card text-center hover:border-blue-300">
           <div className="text-3xl mb-2">➕</div>
           <h3 className="font-semibold">Add Contractor</h3>
           <p className="text-xs text-gray-500 mt-1">Add a new verified local business</p>
-        </Link>
-        <Link href="/admin/pricing" className="card text-center hover:border-blue-300">
-          <div className="text-3xl mb-2">💰</div>
-          <h3 className="font-semibold">Update Pricing</h3>
-          <p className="text-xs text-gray-500 mt-1">Adjust roof cost estimates</p>
         </Link>
         <button
           onClick={() => { sessionStorage.removeItem("admin-auth"); router.push("/admin/login"); }}

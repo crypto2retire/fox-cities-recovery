@@ -52,6 +52,7 @@ export const OWNERSHIP_COLORS: Record<OwnershipType, { bg: string; text: string;
 };
 
 export type ContractorCategory =
+  | 'home-builder'
   | 'roofing'
   | 'general-contractor'
   | 'electrician'
@@ -67,6 +68,7 @@ export type ContractorCategory =
   | 'other';
 
 export const CATEGORY_LABELS: Record<ContractorCategory, string> = {
+  'home-builder': 'Home Builders & Rebuild',
   'roofing': 'Roofing',
   'general-contractor': 'General Contractor',
   'electrician': 'Electrician',
@@ -104,24 +106,4 @@ export interface Review {
   // Business response
   businessResponse?: string;
   businessResponseDate?: string;
-}
-
-export interface RoofEstimate {
-  areaSqFt: number;
-  squares: number; // roofing squares (100 sq ft)
-  materialCostLow: number;
-  materialCostHigh: number;
-  laborCostLow: number;
-  laborCostHigh: number;
-  removalCostLow: number;
-  removalCostHigh: number;
-  totalLow: number;
-  totalHigh: number;
-  pitchFactor: number;
-}
-
-export interface RoofPricingConfig {
-  materialPerSqFt: { low: number; high: number };
-  laborPerSqFt: { low: number; high: number };
-  removalPerSqFt: { low: number; high: number };
 }
