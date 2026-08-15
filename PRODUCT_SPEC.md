@@ -50,8 +50,12 @@ Personal data is used for exactly two purposes, and nothing else:
 4. Businesses respond with quotes inside the app. The consumer compares 3 real quotes
    and hires one.
 
-### The 3-Request Cap
-- A consumer is limited to requesting quotes from **3 businesses per service/job**.
+### The 3-Quote Cap (DECIDED)
+- A consumer is limited to **3 quotes per distinct service needed**.
+  - "Each service" means each separate job (e.g., roof + tree removal = 2 services = up to 6 businesses).
+  - 3 is a ceiling, not a floor — a consumer may request 1, 2, or 3.
+- Rationale (Kevin): 3 quotes gives a wide enough price range for real comparison,
+  without making contractors feel like they're wasting time chasing bids.
 - This prevents lead-spamming (the Yelp problem) and keeps signal high for businesses.
 
 ### Why this inverts Yelp/Angi
@@ -141,8 +145,7 @@ ads                   — labeled edge placements
 
 ## 9. Open Questions (need decisions)
 
-1. **3-request cap scope** — is "3" per service/job, per category, or a rolling window?
-   (Recommended: 3 businesses per distinct job request.)
+1. ~~3-request cap scope~~ **DECIDED: 3 quotes per distinct service needed.**
 2. **Consumer identity** — pseudonymous handle vs verified name? (Recommended:
    pseudonymous until a quote is accepted, then real name for the chosen business.)
 3. **Review verification strength** — is a hashed email enough, or do we require proof
@@ -155,7 +158,7 @@ ads                   — labeled edge placements
 ## 10. Build Order
 
 **Ship Menasha (this week):**
-1. Real server-side admin auth + protect API routes (currently client-side only)
+1. ~~Real server-side admin auth + protect API routes~~ **DONE (Aug 2026)**
 2. Google Places API sync for real ratings (replace hardcoded numbers)
 3. Privacy Policy + "we don't sell your data" page
 4. Resource verification status on resources page
@@ -164,6 +167,6 @@ ads                   — labeled edge placements
 5. Migrate JSON → Postgres
 6. Regions + events data model + landing-page template
 7. Google Places import pipeline (per-metro)
-8. In-app messaging + audit trail (the quote request system)
+8. In-app messaging + audit trail (the quote request system — 3 quotes per service)
 9. CRM integration
 10. Ad inventory system (labeled, edge-only)
