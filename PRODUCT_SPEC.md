@@ -72,6 +72,26 @@ Personal data is used for exactly two purposes, and nothing else:
 
 ---
 
+## 3.5 Verified-Transaction Reviews (DECIDED)
+
+Reviews are gated on a **mutually-confirmed transaction** — the core anti-storm-chaser /
+anti-review-bombing mechanic.
+
+- A customer can only review a business they **actually used**, and a business can only
+  confirm work for a customer they **actually served**.
+- Both sides must confirm the work happened before ANY review can be left:
+  1. Customer selects which business they hired (from their quote requests).
+  2. Business confirms the work was completed.
+  3. Only then can either party leave a review.
+- **Storm chasers cannot leave reviews** — they never have a confirmed transaction.
+- This is a **highlighted benefit** for both sides:
+  - Customers get real, accountable reviews (not fake 5-stars or bombed 1-stars).
+  - Businesses are protected from competitors/storm-chasers planting fake reviews.
+- Consequence: the review system is coupled to the quote/hire/messaging system —
+  it cannot go live standalone. (See build order.)
+
+---
+
 ## 4. Ownership Transparency (displayed on every listing)
 
 | Type | Label | Icon |
@@ -148,8 +168,7 @@ ads                   — labeled edge placements
 1. ~~3-request cap scope~~ **DECIDED: 3 quotes per distinct service needed.**
 2. **Consumer identity** — pseudonymous handle vs verified name? (Recommended:
    pseudonymous until a quote is accepted, then real name for the chosen business.)
-3. **Review verification strength** — is a hashed email enough, or do we require proof
-   of work (invoice/invoice#) to deter review-bombing at scale?
+3. ~~Review verification strength~~ **DECIDED: verified-transaction reviews (mutual confirmation required).**
 4. **CRM depth** — what does the "basic CRM from whatshouldicharge.app" include
    (quote tracking, job status, follow-up reminders, simple invoicing)?
 
