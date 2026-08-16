@@ -34,6 +34,24 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* Event landing page link */}
+      <section className="bg-amber-50 border-b border-amber-200">
+        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between gap-4 flex-wrap">
+          <div className="flex items-center gap-2">
+            <span className="text-xl">🌪️</span>
+            <p className="text-sm text-amber-900">
+              <strong>Menasha EF-3 Tornado recovery hub</strong> — verified local contractors, permits, FEMA, and more in one place.
+            </p>
+          </div>
+          <Link
+            href="/recovery/wi/fox-cities/menasha-ef3-2026-07-27"
+            className="btn-primary text-sm whitespace-nowrap"
+          >
+            View Recovery Hub →
+          </Link>
+        </div>
+      </section>
+
       {/* Stats Bar */}
       <section className="bg-white border-b py-6">
         <div className="max-w-4xl mx-auto px-4 grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">

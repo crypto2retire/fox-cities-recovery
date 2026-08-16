@@ -23,7 +23,7 @@ const REGION = {
   id: 'fox-cities-wi',
   name: 'Fox Cities',
   state: 'WI',
-  slug: 'fox-cities-wi',
+  slug: 'fox-cities',
 };
 
 const EVENT = {
@@ -36,6 +36,35 @@ const EVENT = {
   description:
     'EF-3 tornado (140 mph winds, 12.1-mile path) through Menasha, Appleton, and Fox Crossing, WI on July 27, 2026.',
 };
+
+const RESOURCES = [
+  // Emergency & Immediate Help
+  { id: 'fema-disaster-assistance', category: 'Emergency & Immediate Help', title: 'FEMA Disaster Assistance', url: 'https://www.disasterassistance.gov/', description: 'Apply for federal disaster aid. Includes housing assistance, property repair, and other needs.', source: 'FEMA' },
+  { id: 'american-red-cross-wisconsin', category: 'Emergency & Immediate Help', title: 'American Red Cross — Wisconsin', url: 'https://www.redcross.org/local/wisconsin.html', description: 'Emergency shelter, food, supplies, and health services for disaster victims.', source: 'American Red Cross' },
+  { id: 'wisconsin-emergency-management', category: 'Emergency & Immediate Help', title: 'Wisconsin Emergency Management', url: 'https://wem.wi.gov/', description: 'State-level disaster resources and recovery information.', source: 'Wisconsin Emergency Management' },
+  { id: '211-wisconsin', category: 'Emergency & Immediate Help', title: '211 Wisconsin', url: 'https://211wisconsin.communityos.org/', description: 'Dial 211 or visit online for free, confidential help finding local resources.', source: 'United Way 211 Wisconsin' },
+
+  // Insurance & Claims
+  { id: 'wi-oci', category: 'Insurance & Claims', title: 'Wisconsin Office of the Commissioner of Insurance', url: 'https://oci.wi.gov/Pages/Consumers/Home.aspx', description: 'Consumer guides for filing claims, avoiding scams, and understanding your rights.', source: 'Wisconsin OCI' },
+  { id: 'naic-insurance-claim', category: 'Insurance & Claims', title: 'How to File an Insurance Claim (NAIC)', url: 'https://content.naic.org/consumer/disaster-preparedness.htm', description: 'Step-by-step guide to filing and maximizing your insurance claim after a disaster.', source: 'NAIC' },
+  { id: 'ftc-avoid-contractor-fraud', category: 'Insurance & Claims', title: 'Avoiding Contractor Fraud After a Storm', url: 'https://consumer.ftc.gov/articles/hiring-contractor', description: 'FTC guide to spotting and avoiding storm chaser scams.', source: 'Federal Trade Commission' },
+
+  // Financial Assistance
+  { id: 'sba-disaster-loans', category: 'Financial Assistance', title: 'SBA Disaster Loans', url: 'https://www.sba.gov/funding-programs/disaster-assistance', description: 'Low-interest loans for homeowners, renters, and businesses affected by disasters.', source: 'U.S. Small Business Administration' },
+  { id: 'wi-dua', category: 'Financial Assistance', title: 'Wisconsin Disaster Unemployment Assistance', url: 'https://dwd.wisconsin.gov/uiben/dua/', description: 'DUA benefits if you lost work due to the tornado.', source: 'Wisconsin DWD' },
+  { id: 'salvation-army-fox-cities', category: 'Financial Assistance', title: 'Salvation Army — Fox Cities', url: 'https://centralusa.salvationarmy.org/foxcities/', description: 'Emergency financial assistance, food, and basic needs support.', source: 'The Salvation Army' },
+
+  // Rebuilding & Permits
+  { id: 'menasha-building-permits', category: 'Rebuilding & Permits', title: 'City of Menasha — Building Permits', url: 'https://www.menashawi.gov/departments/community_development/building_inspection.php', description: 'Permit requirements and applications for storm damage repairs.', source: 'City of Menasha' },
+  { id: 'appleton-building-inspection', category: 'Rebuilding & Permits', title: 'City of Appleton — Building Inspection', url: 'https://www.appleton.org/government/inspection', description: 'Building permits, inspections, and codes for Appleton residents.', source: 'City of Appleton' },
+  { id: 'fox-crossing-building-permits', category: 'Rebuilding & Permits', title: 'Fox Crossing — Building Permits', url: 'https://foxcrossingwi.gov/departments/community-development/', description: 'Permit information for Fox Crossing residents.', source: 'Village of Fox Crossing' },
+  { id: 'wi-dsps-license-lookup', category: 'Rebuilding & Permits', title: 'Wisconsin DSPS — Contractor License Lookup', url: 'https://apps.dsps.wi.gov/LicenseLookup/Default', description: 'Verify a contractor\'s license before hiring. Protects against unlicensed work.', source: 'Wisconsin DSPS' },
+
+  // Mental Health & Community Support
+  { id: 'disaster-distress-helpline', category: 'Mental Health & Community Support', title: 'Disaster Distress Helpline', url: 'https://www.samhsa.gov/find-help/disaster-distress-helpline', description: '24/7 crisis counseling for emotional distress from disasters. Call 1-800-985-5990.', source: 'SAMHSA' },
+  { id: 'nami-fox-valley', category: 'Mental Health & Community Support', title: 'NAMI Fox Valley', url: 'https://www.namifoxvalley.org/', description: 'Mental health support and resources for Fox Cities residents.', source: 'NAMI Fox Valley' },
+  { id: 'united-way-fox-cities', category: 'Mental Health & Community Support', title: 'Fox Cities Community Resources (United Way)', url: 'https://www.unitedwayfoxcities.org/', description: 'Comprehensive list of local assistance programs.', source: 'United Way Fox Cities' },
+];
 
 function mapContractor(c) {
   return {
@@ -112,6 +141,23 @@ async function main() {
        ON CONFLICT (id) DO NOTHING`,
       [EVENT.id, EVENT.regionId, EVENT.name, EVENT.slug, EVENT.eventType, EVENT.occurredAt, EVENT.description]
     );
+
+    // Seed event resources (idempotent, separate guard — runs even when contractors already exist).
+    const { rows: resCountRows } = await pool.query(
+      'SELECT COUNT(*)::int AS n FROM event_resources WHERE event_id = $1',
+      [EVENT.id]
+    );
+    if (resCountRows[0].n === 0) {
+      for (const r of RESOURCES) {
+        await pool.query(
+          `INSERT INTO event_resources (id, event_id, category, title, url, description, verified, verified_date, source)
+           VALUES ($1, $2, $3, $4, $5, $6, true, '2026-08-15', $7)
+           ON CONFLICT (id) DO NOTHING`,
+          [r.id, EVENT.id, r.category, r.title, r.url, r.description, r.source]
+        );
+      }
+      console.log(`[seed] Seeded ${RESOURCES.length} event resource(s).`);
+    }
 
     // Seed contractors only if the table is empty (never overwrites admin edits).
     const { rows: countRows } = await pool.query('SELECT COUNT(*)::int AS n FROM contractors');

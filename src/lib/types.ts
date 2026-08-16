@@ -107,3 +107,57 @@ export interface Review {
   businessResponse?: string;
   businessResponseDate?: string;
 }
+
+// ---------------------------------------------------------------------------
+// Nationwide event / storm model
+// ---------------------------------------------------------------------------
+
+export interface Region {
+  id: string;      // stable internal key, e.g. 'fox-cities-wi'
+  name: string;    // display name, e.g. 'Fox Cities'
+  state: string;   // two-letter, e.g. 'WI'
+  slug: string;    // URL slug, e.g. 'fox-cities'
+}
+
+export type EventType =
+  | 'tornado'
+  | 'hurricane'
+  | 'hail'
+  | 'flood'
+  | 'wind'
+  | 'wildfire'
+  | 'other';
+
+export const EVENT_TYPE_LABELS: Record<EventType, { label: string; icon: string }> = {
+  tornado: { label: 'Tornado', icon: '🌪️' },
+  hurricane: { label: 'Hurricane', icon: '🌀' },
+  hail: { label: 'Hail Storm', icon: '⛈️' },
+  flood: { label: 'Flood', icon: '🌊' },
+  wind: { label: 'Severe Wind', icon: '💨' },
+  wildfire: { label: 'Wildfire', icon: '🔥' },
+  other: { label: 'Disaster', icon: '⚠️' },
+};
+
+export interface Event {
+  id: string;          // slug key, e.g. 'menasha-ef3-2026-07-27'
+  regionId: string;
+  name: string;        // 'Menasha EF-3 Tornado'
+  slug: string;
+  eventType: EventType;
+  occurredAt: string;  // 'YYYY-MM-DD'
+  description: string | null;
+  active: boolean;
+  region?: Region;     // joined
+}
+
+export interface EventResource {
+  id: string;
+  eventId: string;
+  category: string;
+  title: string;
+  url: string;
+  description: string | null;
+  verified: boolean;
+  verifiedDate: string | null;
+  source: string | null;
+}

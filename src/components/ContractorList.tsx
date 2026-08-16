@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, type ReactNode } from "react";
 import Link from "next/link";
 import { CATEGORY_LABELS, OWNERSHIP_LABELS } from "@/lib";
 import type { Contractor, ContractorCategory, OwnershipType } from "@/lib";
@@ -9,7 +9,17 @@ import { AdPlacement } from "@/components/AdPlacement";
 
 export type SortOption = 'credibility' | 'rating' | 'reviews' | 'oldest' | 'newest';
 
-export function ContractorList({ contractors }: { contractors: Contractor[] }) {
+export function ContractorList({
+  contractors,
+  heading = "Local Contractors",
+  subheading = (
+    <>Every contractor listed here was established in the Fox Cities <strong>before</strong> the July 27, 2026 tornado. No storm chasers — just businesses that are part of this community.</>
+  ),
+}: {
+  contractors: Contractor[];
+  heading?: string;
+  subheading?: ReactNode;
+}) {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<string>("all");
   const [city, setCity] = useState<string>("all");
@@ -63,11 +73,8 @@ export function ContractorList({ contractors }: { contractors: Contractor[] }) {
     <div className="max-w-6xl mx-auto px-4 py-8 sm:py-12">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl sm:text-4xl font-extrabold mb-2">Local Contractors</h1>
-        <p className="text-gray-600">
-          Every contractor listed here was established in the Fox Cities <strong>before</strong> the July 27, 2026 tornado.
-          No storm chasers — just businesses that are part of this community.
-        </p>
+        <h1 className="text-3xl sm:text-4xl font-extrabold mb-2">{heading}</h1>
+        <p className="text-gray-600">{subheading}</p>
       </div>
 
       {/* Filters */}

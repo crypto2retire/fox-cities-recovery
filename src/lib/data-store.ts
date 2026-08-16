@@ -1,4 +1,4 @@
-import type { Contractor, Review } from './types';
+import type { Contractor, Review, Event, EventResource } from './types';
 import { sortByCredibility } from './credibility';
 import { query } from './db';
 
@@ -384,6 +384,112 @@ async function refreshContractorStats(contractorId: string): Promise<void> {
   );
 }
 
+// ---------------------------------------------------------------------------
+// Events / regions / resources (storm landing pages)
+// ---------------------------------------------------------------------------
+
+interface EventRow {
+  id: string;
+  region_id: string;
+  name: string;
+  slug: string;
+  event_type: string;
+  occurred_at: string | Date;
+  description: string | null;
+  active: boolean;
+  region_name?: string;
+  region_state?: string;
+  region_slug?: string;
+}
+
+interface EventResourceRow {
+  id: string;
+  event_id: string;
+  category: string;
+  title: string;
+  url: string;
+  description: string | null;
+  verified: boolean;
+  verified_date: string | Date | null;
+  source: string | null;
+}
+
+function rowToEvent(row: EventRow): Event {
+  return {
+    id: row.id,
+    regionId: row.region_id,
+    name: row.name,
+    slug: row.slug,
+    eventType: (row.event_type as Event['eventType']) ?? 'other',
+    occurredAt: toDateStr(row.occurred_at),
+    description: row.description,
+    active: row.active,
+    region: row.region_name
+      ? { id: row.region_id, name: row.region_name, state: row.region_state ?? '', slug: row.region_slug ?? '' }
+      : undefined,
+  };
+}
+
+function rowToEventResource(row: EventResourceRow): EventResource {
+  return {
+    id: row.id,
+    eventId: row.event_id,
+    category: row.category,
+    title: row.title,
+    url: row.url,
+    description: row.description,
+    verified: row.verified,
+    verifiedDate: row.verified_date ? toDateStr(row.verified_date) : null,
+    source: row.source,
+  };
+}
+
+export async function getEventBySlug(slug: string): Promise<Event | null> {
+  const rows = await query<EventRow>(
+    `SELECT e.*, r.name AS region_name, r.state AS region_state, r.slug AS region_slug
+     FROM events e
+     JOIN regions r ON e.region_id = r.id
+     WHERE e.slug = $1 AND e.active = true
+     LIMIT 1`,
+    [slug]
+  );
+  return rows.length ? rowToEvent(rows[0]) : null;
+}
+
+// Anti-storm-chaser gate: only businesses with a verified year established
+// STRICTLY before the event year. Businesses with an unverified year (null) or
+// established during/after the event year are excluded.
+export async function getContractorsForEvent(event: Event): Promise<Contractor[]> {
+  const eventYear = new Date(event.occurredAt).getFullYear();
+  const rows = await query<ContractorRow>(
+    `SELECT * FROM contractors
+     WHERE region_id = $1
+       AND year_established IS NOT NULL
+       AND year_established < $2`,
+    [event.regionId, eventYear]
+  );
+  return sortByCredibility(rows.map(rowToContractor));
+}
+
+export async function getExcludedContractorCount(event: Event): Promise<number> {
+  const eventYear = new Date(event.occurredAt).getFullYear();
+  const rows = await query<{ n: number }>(
+    `SELECT COUNT(*)::int AS n FROM contractors
+     WHERE region_id = $1
+       AND (year_established IS NULL OR year_established >= $2)`,
+    [event.regionId, eventYear]
+  );
+  return rows[0]?.n ?? 0;
+}
+
+export async function getEventResources(eventId: string): Promise<EventResource[]> {
+  const rows = await query<EventResourceRow>(
+    'SELECT * FROM event_resources WHERE event_id = $1 ORDER BY category, title',
+    [eventId]
+  );
+  return rows.map(rowToEventResource);
+}
+
 // Categories (re-export for existing importers)
 export { CATEGORY_LABELS } from './types';
-export type { Contractor, ContractorCategory, Review } from './types';
+export type { Contractor, ContractorCategory, Review, Event, Region, EventResource, EventType } from './types';
