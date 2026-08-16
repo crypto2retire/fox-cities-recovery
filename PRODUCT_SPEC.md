@@ -163,14 +163,15 @@ ads                   — labeled edge placements
 
 ---
 
-## 9. Open Questions (need decisions)
+## 9. Decisions Log (all resolved)
 
-1. ~~3-request cap scope~~ **DECIDED: 3 quotes per distinct service needed.**
-2. **Consumer identity** — pseudonymous handle vs verified name? (Recommended:
-   pseudonymous until a quote is accepted, then real name for the chosen business.)
-3. ~~Review verification strength~~ **DECIDED: verified-transaction reviews (mutual confirmation required).**
-4. **CRM depth** — what does the "basic CRM from whatshouldicharge.app" include
-   (quote tracking, job status, follow-up reminders, simple invoicing)?
+1. **3-quote cap** — DECIDED: 3 quotes per distinct service needed.
+2. **Consumer identity** — DECIDED (default): pseudonymous handle during quote phase;
+   real name + contact revealed only to the business the consumer hires.
+3. **Review verification** — DECIDED: verified-transaction reviews (mutual confirmation required).
+4. **CRM depth** — DECIDED (default): quote tracking, job status pipeline
+   (requested → quoted → hired → scheduled → done), follow-up reminders, simple
+   invoicing. No payment processing to start.
 
 ---
 
