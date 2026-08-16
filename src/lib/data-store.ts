@@ -1,4 +1,4 @@
-import type { Contractor, Review, Event, EventResource, Ad } from './types';
+import type { Contractor, Review, Event, EventResource, Ad, HelpTicket } from './types';
 import { sortByCredibility } from './credibility';
 import { query } from './db';
 
@@ -560,6 +560,93 @@ export async function deleteAd(id: string): Promise<boolean> {
   return (res.rowCount ?? 0) > 0;
 }
 
+// ---------------------------------------------------------------------------
+// Help tickets (human escalation for the public AI assistant)
+// ---------------------------------------------------------------------------
+
+interface HelpTicketRow {
+  id: string;
+  status: string;
+  name: string | null;
+  contact: string | null;
+  topic: string | null;
+  summary: string;
+  conversation: string | null;
+  resolution_note: string | null;
+  created_at: Date;
+  resolved_at: Date | null;
+  updated_at: Date;
+}
+
+function rowToHelpTicket(row: HelpTicketRow): HelpTicket {
+  return {
+    id: row.id,
+    status: row.status as HelpTicket['status'],
+    name: row.name,
+    contact: row.contact,
+    topic: row.topic,
+    summary: row.summary,
+    conversation: row.conversation,
+    resolutionNote: row.resolution_note,
+    createdAt: row.created_at.toISOString(),
+    resolvedAt: row.resolved_at ? row.resolved_at.toISOString() : null,
+    updatedAt: row.updated_at ? row.updated_at.toISOString() : null,
+  };
+}
+
+export async function getHelpTickets(): Promise<HelpTicket[]> {
+  const rows = await query<HelpTicketRow>('SELECT * FROM help_tickets ORDER BY created_at DESC');
+  return rows.map(rowToHelpTicket);
+}
+
+export async function addHelpTicket(input: {
+  name?: string | null;
+  contact?: string | null;
+  topic?: string | null;
+  summary: string;
+  conversation?: string | null;
+}): Promise<HelpTicket> {
+  const id = `ht_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
+  const rows = await query<HelpTicketRow>(
+    `INSERT INTO help_tickets (id, name, contact, topic, summary, conversation)
+     VALUES ($1, $2, $3, $4, $5, $6)
+     RETURNING *`,
+    [id, input.name ?? null, input.contact ?? null, input.topic ?? null, input.summary, input.conversation ?? null]
+  );
+  return rowToHelpTicket(rows[0]);
+}
+
+export async function updateHelpTicket(
+  id: string,
+  updates: { status?: HelpTicket['status']; resolutionNote?: string | null }
+): Promise<HelpTicket | null> {
+  const sets: string[] = [];
+  const params: unknown[] = [];
+  let i = 1;
+
+  if (updates.status) {
+    sets.push(`status = $${i++}`);
+    params.push(updates.status);
+    sets.push(`resolved_at = ${updates.status === 'resolved' ? 'now()' : 'NULL'}`);
+  }
+  if (updates.resolutionNote !== undefined) {
+    sets.push(`resolution_note = $${i++}`);
+    params.push(updates.resolutionNote ?? null);
+  }
+  if (sets.length === 0) {
+    const rows = await query<HelpTicketRow>('SELECT * FROM help_tickets WHERE id = $1', [id]);
+    return rows.length ? rowToHelpTicket(rows[0]) : null;
+  }
+
+  sets.push('updated_at = now()');
+  params.push(id);
+  const rows = await query<HelpTicketRow>(
+    `UPDATE help_tickets SET ${sets.join(', ')} WHERE id = $${i} RETURNING *`,
+    params
+  );
+  return rows.length ? rowToHelpTicket(rows[0]) : null;
+}
+
 // Categories (re-export for existing importers)
 export { CATEGORY_LABELS } from './types';
-export type { Contractor, ContractorCategory, Review, Event, Region, EventResource, EventType, Ad, AdPlacement } from './types';
+export type { Contractor, ContractorCategory, Review, Event, Region, EventResource, EventType, Ad, AdPlacement, HelpTicket } from './types';

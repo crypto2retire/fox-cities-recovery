@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import "./globals.css";
+import AssistantWidget from "@/components/AssistantWidget";
 
 export const metadata: Metadata = {
   title: "Fox Cities Recovery | Local Contractors & Tornado Relief",
@@ -39,6 +40,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </div>
 
         <main className="min-h-screen">{children}</main>
+        <AssistantWidget />
 
         <footer className="bg-gray-900 text-gray-400 py-12 mt-16">
           <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-3 gap-8">

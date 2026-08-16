@@ -12,6 +12,7 @@
     "test:write": "tsx scripts/test-write.ts",
     "test:ads": "tsx scripts/test-ads.ts",
     "test:market": "tsx scripts/test-market-scan.ts",
+    "test:assistant": "tsx scripts/test-assistant.ts",
     "scan:market": "tsx scripts/scan-market.ts"
   },
   "dependencies": {

@@ -28,8 +28,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(outcome);
   } catch (err) {
     const msg = err instanceof Error ? err.message : 'Scan failed';
-    // 503 = scanner not configured (needs ANTHROPIC_API_KEY); 500 = other failure.
-    const status = msg.includes('ANTHROPIC_API_KEY') ? 503 : 500;
+    // 503 = scanner not configured (no LLM key); 500 = other failure.
+    const status = /LLM not configured/.test(msg) ? 503 : 500;
     return NextResponse.json({ error: msg }, { status });
   }
 }

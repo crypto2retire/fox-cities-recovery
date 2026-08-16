@@ -1,6 +1,11 @@
 // Market scanner — finds real local businesses for a (city, state, category)
-// using an LLM with web search. The prompt is ported from the old donelocal.io
-// engine (see PRODUCT_SPEC.md §11). Requires ANTHROPIC_API_KEY to run.
+// using an LLM with native web search. The prompt is ported from the old
+// donelocal.io engine (see PRODUCT_SPEC.md §11).
+//
+// Provider-agnostic: uses src/lib/llm.ts, which defaults to Google Gemini with
+// Search grounding (replaces Anthropic's web_search tool at a fraction of the
+// cost). No key is bundled — GEMINI_API_KEY (or OPENAI_API_KEY) must be set.
+import { chat } from './llm';
 import type { ScannedCompetitor } from './types';
 
 // Battle-tested prompt from the old donelocal.io dashboard.
@@ -29,9 +34,9 @@ function toNum(v: unknown): number | null {
   return Number.isFinite(n) ? n : null;
 }
 
-/** Normalize a raw Claude response into a list of competitors. */
+/** Normalize a raw LLM response into a list of competitors. */
 function parseCompetitors(raw: string): ScannedCompetitor[] {
-  // Strip any markdown code fences Claude may have added despite instructions.
+  // Strip any markdown code fences the model may have added despite instructions.
   const cleaned = raw
     .replace(/```json/gi, '')
     .replace(/```/g, '')
@@ -42,83 +47,66 @@ function parseCompetitors(raw: string): ScannedCompetitor[] {
   const end = cleaned.lastIndexOf('}');
   if (start === -1 || end === -1) return [];
 
-  const parsed = JSON.parse(cleaned.slice(start, end + 1));
-  const list = parsed?.competitors ?? parsed;
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(cleaned.slice(start, end + 1));
+  } catch {
+    return [];
+  }
+
+  const list = (parsed as { competitors?: unknown })?.competitors ?? parsed;
   if (!Array.isArray(list)) return [];
 
   return list
-    .filter((c) => c && typeof c.name === 'string' && c.name.trim())
-    .map((c) => ({
-      name: String(c.name).trim(),
-      website: typeof c.website === 'string' && c.website ? c.website : null,
-      rating: toNum(c.rating),
-      review_count: typeof c.review_count === 'number' ? c.review_count : toNum(c.review_count),
-      facebook_url: typeof c.facebook_url === 'string' && c.facebook_url ? c.facebook_url : null,
-      instagram_url: typeof c.instagram_url === 'string' && c.instagram_url ? c.instagram_url : null,
-      content_themes: Array.isArray(c.content_themes) ? c.content_themes.map(String) : [],
-      strengths: Array.isArray(c.strengths) ? c.strengths.map(String) : [],
-      weaknesses: Array.isArray(c.weaknesses) ? c.weaknesses.map(String) : [],
-    }));
+    .filter((c) => c && typeof (c as { name?: unknown }).name === 'string' && (c as { name: string }).name.trim())
+    .map((c) => {
+      const o = c as Record<string, unknown>;
+      return {
+        name: String(o.name).trim(),
+        website: typeof o.website === 'string' && o.website ? o.website : null,
+        rating: toNum(o.rating),
+        review_count: typeof o.review_count === 'number' ? o.review_count : toNum(o.review_count),
+        facebook_url: typeof o.facebook_url === 'string' && o.facebook_url ? o.facebook_url : null,
+        instagram_url: typeof o.instagram_url === 'string' && o.instagram_url ? o.instagram_url : null,
+        content_themes: Array.isArray(o.content_themes) ? o.content_themes.map(String) : [],
+        strengths: Array.isArray(o.strengths) ? o.strengths.map(String) : [],
+        weaknesses: Array.isArray(o.weaknesses) ? o.weaknesses.map(String) : [],
+      };
+    });
 }
 
 /**
- * Scan a market via Anthropic with server-side web search.
- * Throws if ANTHROPIC_API_KEY is not configured.
+ * Scan a market via the configured LLM (Gemini Search grounding by default).
+ * Throws if no LLM key is configured.
  */
-export async function scanMarketWithAnthropic(
+export async function scanMarketWithLlm(
   city: string,
   state: string,
   category: string
 ): Promise<ScannedCompetitor[]> {
-  const key = process.env.ANTHROPIC_API_KEY;
-  if (!key) {
-    throw new Error(
-      'ANTHROPIC_API_KEY is not configured. Set it in Railway env vars to enable market scanning.'
-    );
-  }
-
   const userMsg =
     `Search for ${category} businesses in ${city}, ${state}. ` +
     `Find real competitors with their Google ratings, websites, and Facebook pages. ` +
     `Only include real businesses you actually find.`;
 
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'content-type': 'application/json',
-      'x-api-key': key,
-      'anthropic-version': '2023-06-01',
-    },
-    body: JSON.stringify({
-      model: process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-20250514',
-      max_tokens: 4000,
-      system: SYSTEM_MARKET_SCAN,
-      messages: [{ role: 'user', content: userMsg }],
-      // Server-side web search. NOTE: the tool type string below matches the
-      // old donelocal.io build; if Anthropic has since renamed it, update here.
-      tools: [{ type: 'web_search_20250305', name: 'web_search' }],
-    }),
+  const result = await chat({
+    system: SYSTEM_MARKET_SCAN,
+    messages: [{ role: 'user', content: userMsg }],
+    useSearch: true,
+    model: process.env.GEMINI_SCAN_MODEL || process.env.OPENAI_MODEL || undefined,
+    temperature: 0.2,
   });
 
-  if (!res.ok) {
-    const body = await res.text();
-    throw new Error(`Anthropic scan failed (${res.status}): ${body.slice(0, 300)}`);
+  if (!result.text) {
+    throw new Error('LLM returned no text content for market scan.');
   }
 
-  const data = await res.json();
-  const text = data?.content
-    ?.filter((b: { type: string }) => b.type === 'text')
-    ?.map((b: { text: string }) => b.text)
-    ?.join('\n');
-
-  if (!text) {
-    throw new Error('Anthropic returned no text content for market scan.');
-  }
-
-  return parseCompetitors(text);
+  return parseCompetitors(result.text);
 }
 
-/** Returns the active scanner (the Anthropic implementation). */
+/** Returns the active scanner (the LLM implementation). */
 export function getScanner(): Scanner {
-  return scanMarketWithAnthropic;
+  return scanMarketWithLlm;
 }
+
+export { parseCompetitors };

@@ -197,6 +197,20 @@ export interface Ad {
 // Market scanning (on-demand ingestion model)
 // ---------------------------------------------------------------------------
 
+export interface HelpTicket {
+  id: string;
+  status: 'open' | 'in_progress' | 'resolved';
+  name?: string | null;
+  contact?: string | null;
+  topic?: string | null;
+  summary: string;
+  conversation?: string | null;
+  resolutionNote?: string | null;
+  createdAt: string;
+  resolvedAt?: string | null;
+  updatedAt?: string | null;
+}
+
 export interface ScannedCompetitor {
   name: string;
   website?: string | null;
