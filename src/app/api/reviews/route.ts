@@ -4,8 +4,10 @@ import { checkForFraud, sanitizeReviews } from '@/lib/fraud-detection';
 import { isAdminRequest } from '@/lib/auth';
 import type { Review } from '@/lib/types';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
-  const reviews = getAllReviews();
+  const reviews = await getAllReviews();
   return NextResponse.json(sanitizeReviews(reviews));
 }
 
@@ -17,8 +19,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    const allContractors = getContractors().map(c => ({ id: c.id, name: c.name }));
-    const existingReviews = getAllReviews().filter(r => r.contractorId === body.contractorId);
+    const allContractors = (await getContractors()).map(c => ({ id: c.id, name: c.name }));
+    const existingReviews = (await getAllReviews()).filter(r => r.contractorId === body.contractorId);
     const fraudResult = checkForFraud(body, existingReviews, allContractors);
 
     const review: Review = {
@@ -27,7 +29,7 @@ export async function POST(request: NextRequest) {
       flagReason: fraudResult.reasons.join('; ') || undefined,
     };
 
-    const saved = addReview(review);
+    const saved = await addReview(review);
 
     const { contactEmail, contactPhone, ...safe } = saved;
     return NextResponse.json(safe, { status: 201 });
@@ -43,7 +45,7 @@ export async function DELETE(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const id = searchParams.get('id');
   if (!id) return NextResponse.json({ error: 'Missing id' }, { status: 400 });
-  const deleted = deleteReview(id);
+  const deleted = await deleteReview(id);
   if (!deleted) return NextResponse.json({ error: 'Not found' }, { status: 404 });
   return NextResponse.json({ success: true });
 }

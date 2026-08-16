@@ -1,13 +1,11 @@
-import { getContractors, getContractorById, getReviewsForContractor } from "@/lib/data-store";
+import { getContractorById, getReviewsForContractor } from "@/lib/data-store";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { OwnershipBadge } from "@/components/OwnershipBadge";
 import { AdPlacement } from "@/components/AdPlacement";
 import { ReviewsSection } from "@/components/ReviewsSection";
 
-export function generateStaticParams() {
-  return getContractors().map(c => ({ id: c.id }));
-}
+export const dynamic = "force-dynamic";
 
 export default async function ContractorDetailPage({
   params,
@@ -15,11 +13,11 @@ export default async function ContractorDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const contractor = getContractorById(id);
+  const contractor = await getContractorById(id);
   
   if (!contractor) notFound();
   
-  const contractorReviews = getReviewsForContractor(id);
+  const contractorReviews = await getReviewsForContractor(id);
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 sm:py-12">

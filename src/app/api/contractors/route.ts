@@ -2,8 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getContractors, addContractor } from '@/lib/data-store';
 import { isAdminRequest } from '@/lib/auth';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
-  return NextResponse.json(getContractors());
+  return NextResponse.json(await getContractors());
 }
 
 export async function POST(request: NextRequest) {
@@ -16,7 +18,7 @@ export async function POST(request: NextRequest) {
     if (!body.id || !body.name || !body.category) {
       return NextResponse.json({ error: 'Missing required fields: id, name, category' }, { status: 400 });
     }
-    const contractor = addContractor(body);
+    const contractor = await addContractor(body);
     return NextResponse.json(contractor, { status: 201 });
   } catch {
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });

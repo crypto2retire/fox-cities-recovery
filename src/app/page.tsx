@@ -2,8 +2,10 @@ import Link from "next/link";
 import { getContractors } from "@/lib/data-store";
 import { OwnershipBadge } from "@/components/OwnershipBadge";
 
-export default function Home() {
-  const contractors = getContractors();
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+  const contractors = await getContractors();
 
   return (
     <>
