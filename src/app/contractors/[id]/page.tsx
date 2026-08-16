@@ -42,7 +42,12 @@ export default async function ContractorDetailPage({
                 </span>
               )}
             </div>
-            <p className="text-gray-500">{contractor.city}, WI · Established {contractor.yearEstablished} · {new Date().getFullYear() - contractor.yearEstablished}+ years serving Fox Cities</p>
+            <p className="text-gray-500">
+              {contractor.city}, WI
+              {contractor.yearEstablished != null
+                ? ` · Established ${contractor.yearEstablished} · ${new Date().getFullYear() - contractor.yearEstablished}+ years serving Fox Cities`
+                : ' · Established year not verified'}
+            </p>
           </div>
         </div>
 

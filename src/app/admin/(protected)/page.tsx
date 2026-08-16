@@ -75,7 +75,7 @@ export default function AdminDashboard() {
                   <td className="px-4 py-3 font-medium">{c.name}</td>
                   <td className="px-4 py-3 capitalize text-gray-600">{c.category.replace(/-/g, ' ')}</td>
                   <td className="px-4 py-3 text-gray-600">{c.city}</td>
-                  <td className="px-4 py-3 text-gray-600">{c.yearEstablished}</td>
+                  <td className="px-4 py-3 text-gray-600">{c.yearEstablished ?? '?'}</td>
                   <td className="px-4 py-3">{c.verified ? '✅' : '❌'}</td>
                   <td className="px-4 py-3 text-xs">{OWNERSHIP_LABELS[c.ownershipType] || '?'}</td>
                   <td className="px-4 py-3">{c.rating != null ? `★ ${c.rating}` : '—'}</td>

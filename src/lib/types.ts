@@ -9,7 +9,7 @@ export interface Contractor {
   website?: string;
   address: string;
   city: string; // Menasha, Appleton, Fox Crossing, etc.
-  yearEstablished: number; // to verify pre-storm presence
+  yearEstablished: number | null; // null = year not verified; used for pre-storm gate + longevity
   verified: boolean; // manually verified as local pre-storm business
   description: string;
   services: string[];

@@ -19,7 +19,9 @@ const CONFIDENCE = 10;    // Reviews needed before rating is taken at face value
 export function computeCredibilityScore(contractor: Contractor): number {
   const { rating, reviewCount, yearEstablished } = contractor;
 
-  const yearsInBusiness = new Date().getFullYear() - yearEstablished;
+  const yearsInBusiness = yearEstablished != null
+    ? new Date().getFullYear() - yearEstablished
+    : 0;
 
   // No verified rating yet — rank by longevity only.
   if (rating == null || reviewCount == null) {
@@ -53,10 +55,16 @@ export function sortByCredibility(contractors: Contractor[]): Contractor[] {
  */
 export function explainScore(contractor: Contractor): string {
   const { rating, reviewCount, yearEstablished } = contractor;
-  const yearsInBusiness = new Date().getFullYear() - yearEstablished;
+  const yearsInBusiness = yearEstablished != null
+    ? new Date().getFullYear() - yearEstablished
+    : null;
+
+  const yearsLabel = yearsInBusiness != null
+    ? `${yearsInBusiness} years in business`
+    : 'year established not verified';
 
   if (rating == null || reviewCount == null) {
-    return `${yearsInBusiness} years in business · rating not yet verified`;
+    return `${yearsLabel} · rating not yet verified`;
   }
 
   const bayesianRating =

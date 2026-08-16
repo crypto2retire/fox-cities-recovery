@@ -92,7 +92,7 @@ export default function Home() {
                   </div>
                 </div>
                 <h3 className="font-bold text-lg group-hover:text-blue-700 transition-colors">{c.name}</h3>
-                <p className="text-sm text-gray-500 mt-1">{c.city}, WI · Est. {c.yearEstablished}</p>
+                <p className="text-sm text-gray-500 mt-1">{c.city}, WI{c.yearEstablished != null ? ` · Est. ${c.yearEstablished}` : ''}</p>
                 <p className="text-sm text-gray-600 mt-3 line-clamp-2">{c.description}</p>
                 <div className="flex items-center gap-2 mt-4 text-sm">
                   {c.rating != null ? (
@@ -101,7 +101,7 @@ export default function Home() {
                       <span className="text-gray-400">({c.reviewCount} reviews)</span>
                     </>
                   ) : (
-                    <span className="text-gray-400">Est. {c.yearEstablished} · No rating yet</span>
+                    <span className="text-gray-400">No rating yet</span>
                   )}
                 </div>
               </Link>

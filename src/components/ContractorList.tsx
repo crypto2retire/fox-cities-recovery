@@ -46,10 +46,10 @@ export function ContractorList({ contractors }: { contractors: Contractor[] }) {
         sorted.sort((a, b) => (b.reviewCount ?? 0) - (a.reviewCount ?? 0) || ratingOrNull(b.rating) - ratingOrNull(a.rating));
         break;
       case 'oldest':
-        sorted.sort((a, b) => a.yearEstablished - b.yearEstablished);
+        sorted.sort((a, b) => (a.yearEstablished ?? 9999) - (b.yearEstablished ?? 9999));
         break;
       case 'newest':
-        sorted.sort((a, b) => b.yearEstablished - a.yearEstablished);
+        sorted.sort((a, b) => (b.yearEstablished ?? 0) - (a.yearEstablished ?? 0));
         break;
       case 'credibility':
       default:
@@ -169,7 +169,7 @@ export function ContractorList({ contractors }: { contractors: Contractor[] }) {
               </div>
 
               <h3 className="font-bold text-lg group-hover:text-blue-700 transition-colors">{c.name}</h3>
-              <p className="text-sm text-gray-500 mt-1">{c.city}, WI · Est. {c.yearEstablished}</p>
+              <p className="text-sm text-gray-500 mt-1">{c.city}, WI{c.yearEstablished != null ? ` · Est. ${c.yearEstablished}` : ''}</p>
 
               <p className="text-sm text-gray-600 mt-3 line-clamp-2">{c.description}</p>
 

@@ -20,7 +20,7 @@ export default function EditContractorPage() {
     website: "",
     address: "",
     city: "",
-    yearEstablished: 2020,
+    yearEstablished: null as number | null,
     verified: true,
     description: "",
     services: "",
@@ -136,8 +136,8 @@ export default function EditContractorPage() {
             <input required value={form.city} onChange={e => update("city", e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">Year Established *</label>
-            <input required type="number" min={1950} max={2026} value={form.yearEstablished} onChange={e => update("yearEstablished", parseInt(e.target.value))} className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
+            <label className="block text-sm font-medium mb-1">Year Established</label>
+            <input type="number" min={1950} max={2026} value={form.yearEstablished ?? ''} onChange={e => update("yearEstablished", e.target.value ? parseInt(e.target.value) : null)} placeholder="Leave blank if unknown" className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
           </div>
         </div>
 
