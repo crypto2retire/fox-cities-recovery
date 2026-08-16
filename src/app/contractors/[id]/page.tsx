@@ -111,6 +111,23 @@ export default async function ContractorDetailPage({
                   </a>
                 </div>
               )}
+              {(contractor.facebookUrl || contractor.instagramUrl) && (
+                <div className="flex items-center gap-3 pt-1">
+                  <span className="text-xl">📣</span>
+                  <div className="flex gap-4">
+                    {contractor.facebookUrl && (
+                      <a href={contractor.facebookUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 font-medium">
+                        Facebook
+                      </a>
+                    )}
+                    {contractor.instagramUrl && (
+                      <a href={contractor.instagramUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 font-medium">
+                        Instagram
+                      </a>
+                    )}
+                  </div>
+                </div>
+              )}
               <div className="flex items-center gap-3">
                 <span className="text-xl">📍</span>
                 <span className="text-gray-700">{contractor.address}</span>

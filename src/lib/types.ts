@@ -20,6 +20,15 @@ export interface Contractor {
   logo?: string;
   ownershipType: OwnershipType;
   ownershipNotes?: string; // evidence for ownership classification
+
+  // Social + competitive intelligence (from market scans)
+  facebookUrl?: string;
+  instagramUrl?: string;
+  contentThemes?: string[];
+  strengths?: string[];
+  weaknesses?: string[];
+  lastScanned?: string; // ISO timestamp of last market scan
+  scanSource?: string;  // 'market-scan' | 'manual' | 'google'
 }
 
 export type OwnershipType = 
@@ -182,4 +191,37 @@ export interface Ad {
   ctaText: string | null;
   placement: AdPlacement;
   active: boolean;
+}
+
+// ---------------------------------------------------------------------------
+// Market scanning (on-demand ingestion model)
+// ---------------------------------------------------------------------------
+
+export interface ScannedCompetitor {
+  name: string;
+  website?: string | null;
+  rating?: number | null;
+  review_count?: number | null;
+  facebook_url?: string | null;
+  instagram_url?: string | null;
+  content_themes?: string[];
+  strengths?: string[];
+  weaknesses?: string[];
+}
+
+export type MarketScanStatus = 'pending' | 'running' | 'completed' | 'failed';
+
+export interface MarketScan {
+  id: string;
+  regionId?: string | null;
+  city: string;
+  state: string;
+  category: string;
+  query?: string | null;
+  status: MarketScanStatus;
+  results?: ScannedCompetitor[];
+  resultCount: number;
+  scannedAt?: string | null;
+  expiresAt?: string | null;
+  error?: string | null;
 }

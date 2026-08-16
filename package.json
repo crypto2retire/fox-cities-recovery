@@ -10,7 +10,9 @@
     "db:migrate": "node scripts/migrate.mjs",
     "db:seed": "node scripts/seed.mjs",
     "test:write": "tsx scripts/test-write.ts",
-    "test:ads": "tsx scripts/test-ads.ts"
+    "test:ads": "tsx scripts/test-ads.ts",
+    "test:market": "tsx scripts/test-market-scan.ts",
+    "scan:market": "tsx scripts/scan-market.ts"
   },
   "dependencies": {
     "next": "16.2.12",

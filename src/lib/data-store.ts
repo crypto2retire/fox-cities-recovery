@@ -27,6 +27,13 @@ interface ContractorRow {
   ownership_type: string;
   ownership_notes: string | null;
   region_id: string | null;
+  facebook_url: string | null;
+  instagram_url: string | null;
+  content_themes: unknown;
+  strengths: unknown;
+  weaknesses: unknown;
+  last_scanned: Date | null;
+  scan_source: string | null;
   created_at: Date;
   updated_at: Date;
 }
@@ -96,6 +103,13 @@ function rowToContractor(row: ContractorRow): Contractor {
     logo: row.logo ?? undefined,
     ownershipType: (row.ownership_type ?? 'unknown') as Contractor['ownershipType'],
     ownershipNotes: row.ownership_notes ?? undefined,
+    facebookUrl: row.facebook_url ?? undefined,
+    instagramUrl: row.instagram_url ?? undefined,
+    contentThemes: toServices(row.content_themes),
+    strengths: toServices(row.strengths),
+    weaknesses: toServices(row.weaknesses),
+    lastScanned: row.last_scanned ? new Date(row.last_scanned).toISOString() : undefined,
+    scanSource: row.scan_source ?? undefined,
   };
 }
 

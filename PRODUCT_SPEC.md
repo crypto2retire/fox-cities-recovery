@@ -190,3 +190,31 @@ ads                   — labeled edge placements
 8. In-app messaging + audit trail (the quote request system — 3 quotes per service)
 9. CRM integration
 10. Ad inventory system (labeled, edge-only)
+
+---
+
+## 11. National Rollout Decisions (Aug 2026)
+
+### On-demand market scanning (the ingestion model)
+- Do NOT pre-scrape the country. Scan a market **on first search**, cache the result,
+  and refresh every 30–90 days. (Same "lazy-load" pattern the old donelocal.io used on
+  customer signup — now triggered by consumer search instead of customer signup.)
+- First search for a new market is slow (LLM + web search); UX must show a "building
+  this area's directory" state. Pre-warm high-intent metros.
+
+### Social activity is a ranking signal
+- Listings include social links (Facebook / Instagram / Google Business).
+- Social activity factors into credibility: a business active on social is publicly
+  accountable and tends to avoid negative reviews/mentions.
+
+### Reusable IP from old donelocal.io
+- The market-scan prompt + competitor schema live in `~/Downloads/donelocal-wsic-handoff`
+  (old `/opt/hauliq/` droplet, 138.68.239.233, is now unreachable/decommissioned).
+- Competitor schema: name, website, rating, review_count, facebook_url, content_themes,
+  strengths, weaknesses. Maps directly onto `contractors` enrichment + the ratings seed
+  (replaces the Outscraper decision).
+
+### Brand / positioning
+- Built by a business owner harassed by Yelp/Angi/HomeAdvisor sales calls.
+- Marketing: never sell personal data, limit who gets bids (3-quote), in-app messaging,
+  surface locally-owned operators (better price/options/long-term backing).
