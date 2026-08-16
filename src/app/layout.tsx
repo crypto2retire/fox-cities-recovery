@@ -51,6 +51,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <ul className="space-y-2 text-sm">
                 <li><Link href="/contractors" className="hover:text-white transition-colors">Find Local Contractors</Link></li>
                 <li><Link href="/resources" className="hover:text-white transition-colors">Disaster Resources</Link></li>
+                <li><Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
               </ul>
             </div>
             <div>
@@ -60,6 +61,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </div>
           <div className="max-w-6xl mx-auto px-4 mt-8 pt-8 border-t border-gray-800 text-center text-xs">
             <p>Fox Cities Recovery — Community-built for the July 27, 2026 EF-3 Tornado. Free for all residents.</p>
+            <p className="mt-2 text-gray-500">
+              We never sell your data.{" "}
+              <Link href="/privacy" className="underline hover:text-gray-300 transition-colors">Read our privacy policy</Link>
+            </p>
           </div>
         </footer>
       </body>
