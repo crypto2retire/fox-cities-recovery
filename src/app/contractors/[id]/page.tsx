@@ -181,8 +181,8 @@ export default async function ContractorDetailPage({
             </p>
           </div>
 
-          {/* Ad slot */}
-          <AdPlacement />
+          {/* Ad slot — geo-targeted to this contractor's city */}
+          <AdPlacement city={contractor.city} state="WI" />
         </div>
       </div>
     </div>

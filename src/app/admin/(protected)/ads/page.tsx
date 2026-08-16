@@ -16,6 +16,9 @@ export default function AdminAdsPage() {
     description: "",
     ctaText: "",
     placement: "sidebar" as AdPlacement,
+    cities: "",
+    zipCodes: "",
+    state: "",
   });
 
   const loadAds = () => {
@@ -44,10 +47,13 @@ export default function AdminAdsPage() {
         ctaText: form.ctaText.trim() || null,
         placement: form.placement,
         active: true,
+        cities: form.cities.split(",").map((s) => s.trim()).filter(Boolean),
+        zipCodes: form.zipCodes.split(",").map((s) => s.trim()).filter(Boolean),
+        state: form.state.trim() || null,
       }),
     });
     if (res.ok) {
-      setForm({ title: "", url: "", description: "", ctaText: "", placement: "sidebar" });
+      setForm({ title: "", url: "", description: "", ctaText: "", placement: "sidebar", cities: "", zipCodes: "", state: "" });
       loadAds();
     } else {
       alert("Failed to save ad.");
@@ -104,6 +110,20 @@ export default function AdminAdsPage() {
             </select>
           </div>
         </div>
+        <div className="grid sm:grid-cols-3 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-1">Target cities (comma-separated)</label>
+            <input value={form.cities} onChange={e => setForm({ ...form, cities: e.target.value })} placeholder="Menasha, Appleton — blank = all" className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">Target zip codes</label>
+            <input value={form.zipCodes} onChange={e => setForm({ ...form, zipCodes: e.target.value })} placeholder="54952, 54911" className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">Target state</label>
+            <input value={form.state} onChange={e => setForm({ ...form, state: e.target.value })} placeholder="WI — blank = all" className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
+          </div>
+        </div>
         <button type="submit" disabled={saving} className="btn-primary text-sm">
           {saving ? "Saving..." : "Add Ad"}
         </button>
@@ -129,6 +149,14 @@ export default function AdminAdsPage() {
                 </div>
                 {ad.description && <p className="text-sm text-gray-600 mt-1">{ad.description}</p>}
                 {ad.url && <p className="text-xs text-gray-400 mt-1 truncate max-w-md">{ad.url}</p>}
+                {(ad.cities?.length || ad.zipCodes?.length || ad.state) && (
+                  <p className="text-xs text-gray-400 mt-1">
+                    📍{" "}
+                    {[ad.state && ad.state, ad.cities?.length ? ad.cities.join(", ") : null, ad.zipCodes?.length ? `zips ${ad.zipCodes.join(", ")}` : null]
+                      .filter(Boolean)
+                      .join(" · ")}
+                  </p>
+                )}
               </div>
               <button onClick={() => handleDelete(ad.id)} className="text-xs text-red-500 hover:text-red-700 whitespace-nowrap">
                 Delete

@@ -10,6 +10,9 @@ interface Ad {
   ctaText: string | null;
   placement: string;
   active: boolean;
+  cities?: string[];
+  zipCodes?: string[];
+  state?: string | null;
 }
 
 // Map a component variant to a database placement.
@@ -23,16 +26,31 @@ const PLACEMENT_BY_VARIANT: Record<string, string> = {
 interface AdPlacementProps {
   variant?: "sidebar" | "inline" | "banner" | "event";
   className?: string;
+  // Geo context — passed from the page so ads can be zip/city/state targeted.
+  city?: string | null;
+  state?: string | null;
+  zip?: string | null;
 }
 
-export function AdPlacement({ variant = "sidebar", className = "" }: AdPlacementProps) {
+export function AdPlacement({
+  variant = "sidebar",
+  className = "",
+  city = null,
+  state = null,
+  zip = null,
+}: AdPlacementProps) {
   const placement = PLACEMENT_BY_VARIANT[variant] ?? "sidebar";
   const [ads, setAds] = useState<Ad[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
-    fetch(`/api/ads?placement=${placement}`)
+    const params = new URLSearchParams({ placement });
+    if (city) params.set("city", city);
+    if (state) params.set("state", state);
+    if (zip) params.set("zip", zip);
+
+    fetch(`/api/ads?${params.toString()}`)
       .then((r) => r.json())
       .then((data) => {
         if (!cancelled) setAds(Array.isArray(data) ? data : []);
@@ -46,7 +64,7 @@ export function AdPlacement({ variant = "sidebar", className = "" }: AdPlacement
     return () => {
       cancelled = true;
     };
-  }, [placement]);
+  }, [placement, city, state, zip]);
 
   if (loading) return null;
 

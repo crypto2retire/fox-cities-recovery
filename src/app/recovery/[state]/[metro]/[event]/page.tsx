@@ -108,9 +108,9 @@ export default async function StormPage({
         />
       </section>
 
-      {/* Event sponsor slot */}
+      {/* Event sponsor slot — geo-targeted to the storm's region */}
       <div className="max-w-4xl mx-auto px-4 -mt-4 pb-4">
-        <AdPlacement variant="event" />
+        <AdPlacement variant="event" state={region?.state} />
       </div>
 
       {/* Resources */}

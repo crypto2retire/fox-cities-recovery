@@ -1,4 +1,4 @@
-import type { Contractor, Review, Event, EventResource, Ad, HelpTicket } from './types';
+import type { Contractor, Review, Event, EventResource, Ad, HelpTicket, AdMarket, AdRate } from './types';
 import { sortByCredibility } from './credibility';
 import { query } from './db';
 
@@ -517,6 +517,24 @@ interface AdRow {
   placement: string;
   active: boolean;
   created_at: Date;
+  cities: unknown;
+  zip_codes: unknown;
+  state: string | null;
+  market_id: string | null;
+  rate_cents: number | null;
+}
+
+function arr(v: unknown): string[] {
+  if (Array.isArray(v)) return v.map(String);
+  if (typeof v === 'string') {
+    try {
+      const parsed = JSON.parse(v);
+      return Array.isArray(parsed) ? parsed.map(String) : [];
+    } catch {
+      return [];
+    }
+  }
+  return [];
 }
 
 function rowToAd(row: AdRow): Ad {
@@ -528,6 +546,11 @@ function rowToAd(row: AdRow): Ad {
     ctaText: row.cta_text,
     placement: (row.placement as Ad['placement']) ?? 'sidebar',
     active: row.active,
+    cities: arr(row.cities),
+    zipCodes: arr(row.zip_codes),
+    state: row.state,
+    marketId: row.market_id,
+    rateCents: row.rate_cents,
   };
 }
 
@@ -546,10 +569,28 @@ export async function getActiveAdsByPlacement(placement: string): Promise<Ad[]> 
 
 export async function addAd(ad: Ad): Promise<Ad> {
   const rows = await query<AdRow>(
-    `INSERT INTO ads (id, title, url, description, cta_text, placement, active)
-     VALUES ($1, $2, $3, $4, $5, $6, $7)
+    `INSERT INTO ads (
+       id, title, url, description, cta_text, placement, active,
+       cities, zip_codes, state, market_id, rate_cents
+     ) VALUES (
+       $1, $2, $3, $4, $5, $6, $7,
+       $8::text[], $9::text[], $10, $11, $12
+     )
      RETURNING *`,
-    [ad.id, ad.title, ad.url ?? null, ad.description ?? null, ad.ctaText ?? null, ad.placement, ad.active ?? true]
+    [
+      ad.id,
+      ad.title,
+      ad.url ?? null,
+      ad.description ?? null,
+      ad.ctaText ?? null,
+      ad.placement,
+      ad.active ?? true,
+      ad.cities ?? [],
+      ad.zipCodes ?? [],
+      ad.state ?? null,
+      ad.marketId ?? null,
+      ad.rateCents ?? null,
+    ]
   );
   return rowToAd(rows[0]);
 }
@@ -558,6 +599,127 @@ export async function deleteAd(id: string): Promise<boolean> {
   const { getPool } = await import('./db');
   const res = await getPool().query('DELETE FROM ads WHERE id = $1', [id]);
   return (res.rowCount ?? 0) > 0;
+}
+
+// ---------------------------------------------------------------------------
+// Ad markets + rates (geo-targeted pricing)
+// ---------------------------------------------------------------------------
+
+interface AdMarketRow {
+  id: string;
+  name: string;
+  state: string;
+  cities: unknown;
+  zip_codes: unknown;
+  population: number;
+  tier: string;
+  created_at: Date;
+  updated_at: Date;
+}
+
+interface AdRateRow {
+  id: string;
+  market_id: string;
+  placement: string;
+  base_rate_cents: number;
+  current_rate_cents: number;
+  min_rate_cents: number;
+  max_rate_cents: number;
+  capacity: number;
+  filled: number;
+  waitlist: number;
+  last_adjusted_at: Date | null;
+  adjustment_note: string | null;
+}
+
+function rowToAdMarket(row: AdMarketRow): AdMarket {
+  return {
+    id: row.id,
+    name: row.name,
+    state: row.state,
+    cities: arr(row.cities),
+    zipCodes: arr(row.zip_codes),
+    population: row.population,
+    tier: row.tier as AdMarket['tier'],
+    createdAt: row.created_at.toISOString(),
+    updatedAt: row.updated_at.toISOString(),
+  };
+}
+
+function rowToAdRate(row: AdRateRow): AdRate {
+  return {
+    id: row.id,
+    marketId: row.market_id,
+    placement: row.placement as AdRate['placement'],
+    baseRateCents: row.base_rate_cents,
+    currentRateCents: row.current_rate_cents,
+    minRateCents: row.min_rate_cents,
+    maxRateCents: row.max_rate_cents,
+    capacity: row.capacity,
+    filled: row.filled,
+    waitlist: row.waitlist,
+    lastAdjustedAt: row.last_adjusted_at ? row.last_adjusted_at.toISOString() : null,
+    adjustmentNote: row.adjustment_note,
+  };
+}
+
+export async function getAdMarkets(): Promise<AdMarket[]> {
+  const rows = await query<AdMarketRow>('SELECT * FROM ad_markets ORDER BY population DESC');
+  return rows.map(rowToAdMarket);
+}
+
+export async function getAdRates(): Promise<AdRate[]> {
+  const rows = await query<AdRateRow>('SELECT * FROM ad_rates ORDER BY market_id, placement');
+  return rows.map(rowToAdRate);
+}
+
+export async function upsertAdMarket(market: AdMarket): Promise<AdMarket> {
+  const rows = await query<AdMarketRow>(
+    `INSERT INTO ad_markets (id, name, state, cities, zip_codes, population, tier)
+     VALUES ($1, $2, $3, $4::text[], $5::text[], $6, $7)
+     ON CONFLICT (id) DO UPDATE SET
+       name = EXCLUDED.name,
+       state = EXCLUDED.state,
+       cities = EXCLUDED.cities,
+       zip_codes = EXCLUDED.zip_codes,
+       population = EXCLUDED.population,
+       tier = EXCLUDED.tier,
+       updated_at = now()
+     RETURNING *`,
+    [market.id, market.name, market.state, market.cities ?? [], market.zipCodes ?? [], market.population, market.tier]
+  );
+  return rowToAdMarket(rows[0]);
+}
+
+export async function upsertAdRate(rate: AdRate): Promise<AdRate> {
+  const rows = await query<AdRateRow>(
+    `INSERT INTO ad_rates (
+       id, market_id, placement, base_rate_cents, current_rate_cents,
+       min_rate_cents, max_rate_cents, capacity, filled, waitlist, adjustment_note
+     ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+     ON CONFLICT (id) DO UPDATE SET
+       current_rate_cents = EXCLUDED.current_rate_cents,
+       filled = EXCLUDED.filled,
+       waitlist = EXCLUDED.waitlist,
+       adjustment_note = EXCLUDED.adjustment_note,
+       last_adjusted_at = now(),
+       updated_at = now()
+     RETURNING *`,
+    [
+      rate.id,
+      rate.marketId,
+      rate.placement,
+      rate.baseRateCents,
+      rate.currentRateCents,
+      rate.minRateCents,
+      rate.maxRateCents,
+      rate.capacity,
+      rate.filled,
+      rate.waitlist,
+      rate.adjustmentNote ?? null,
+    ]
+  );
+  return rowToAdRate(rows[0]);
 }
 
 // ---------------------------------------------------------------------------
@@ -649,4 +811,4 @@ export async function updateHelpTicket(
 
 // Categories (re-export for existing importers)
 export { CATEGORY_LABELS } from './types';
-export type { Contractor, ContractorCategory, Review, Event, Region, EventResource, EventType, Ad, AdPlacement, HelpTicket } from './types';
+export type { Contractor, ContractorCategory, Review, Event, Region, EventResource, EventType, Ad, AdPlacement, HelpTicket, AdMarket, AdRate, MarketTier } from './types';

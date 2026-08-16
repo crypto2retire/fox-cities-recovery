@@ -191,6 +191,64 @@ export interface Ad {
   ctaText: string | null;
   placement: AdPlacement;
   active: boolean;
+  // Geo-targeting (empty/absent = shown everywhere)
+  cities?: string[];
+  zipCodes?: string[];
+  state?: string | null;
+  marketId?: string | null;
+  rateCents?: number | null;
+}
+
+export type MarketTier = 'small' | 'medium' | 'large' | 'metro';
+
+export const MARKET_TIER_LABELS: Record<MarketTier, string> = {
+  small: 'Small (under 25k)',
+  medium: 'Medium (25k–75k)',
+  large: 'Large (75k–200k)',
+  metro: 'Metro (200k+)',
+};
+
+export interface AdMarket {
+  id: string;
+  name: string;
+  state: string;
+  cities: string[];
+  zipCodes: string[];
+  population: number;
+  tier: MarketTier;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface AdRate {
+  id: string;          // '{market_id}:{placement}'
+  marketId: string;
+  placement: AdPlacement;
+  baseRateCents: number;
+  currentRateCents: number;
+  minRateCents: number;
+  maxRateCents: number;
+  capacity: number;
+  filled: number;
+  waitlist: number;
+  lastAdjustedAt?: string | null;
+  adjustmentNote?: string | null;
+}
+
+export interface PricingRecommendation {
+  marketId: string;
+  placement: AdPlacement;
+  action: 'raise' | 'lower' | 'hold';
+  currentRateCents: number;
+  newRateCents: number;
+  reason: string;
+  confidence: 'low' | 'medium' | 'high';
+}
+
+export interface PricingAnalysis {
+  source: 'ai' | 'rules';
+  analyzedAt: string;
+  recommendations: PricingRecommendation[];
 }
 
 // ---------------------------------------------------------------------------

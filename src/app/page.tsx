@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getContractors } from "@/lib/data-store";
 import { OwnershipBadge } from "@/components/OwnershipBadge";
+import { AdPlacement } from "@/components/AdPlacement";
 
 export const dynamic = "force-dynamic";
 
@@ -129,6 +130,11 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      {/* Home sponsor slot — directory-level placement (state-wide WI) */}
+      <div className="max-w-5xl mx-auto px-4 mt-12">
+        <AdPlacement variant="banner" state="WI" />
+      </div>
 
       {/* CTA */}
       <section className="py-16 bg-blue-700 text-white text-center">

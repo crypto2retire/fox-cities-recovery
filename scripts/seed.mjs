@@ -159,6 +159,51 @@ async function main() {
       console.log(`[seed] Seeded ${RESOURCES.length} event resource(s).`);
     }
 
+    // Seed ad markets + rates (idempotent, separate guard — always runs).
+    const MARKETS = [
+      { id: 'fox-cities', name: 'Fox Cities (Metro)', state: 'WI', cities: ['Appleton', 'Neenah', 'Menasha', 'Kaukauna', 'Fox Crossing', 'Little Chute', 'Grand Chute', 'Oshkosh', 'Greenville', 'Harrison'], zipCodes: ['54911', '54913', '54914', '54915', '54952', '54956', '54130', '54140', '54901', '54902'], population: 424094 },
+      { id: 'appleton', name: 'Appleton', state: 'WI', cities: ['Appleton', 'Grand Chute', 'Greenville', 'Fox Crossing'], zipCodes: ['54911', '54913', '54914', '54915'], population: 243147 },
+      { id: 'menasha', name: 'Menasha', state: 'WI', cities: ['Menasha'], zipCodes: ['54952'], population: 18268 },
+      { id: 'neenah', name: 'Neenah', state: 'WI', cities: ['Neenah'], zipCodes: ['54956', '54957'], population: 26062 },
+      { id: 'oshkosh', name: 'Oshkosh', state: 'WI', cities: ['Oshkosh'], zipCodes: ['54901', '54902', '54904'], population: 66083 },
+    ];
+
+    const TIER_BASE = {
+      small: { event: 15000, sidebar: 8000, directory: 6000 },
+      medium: { event: 25000, sidebar: 13000, directory: 10000 },
+      large: { event: 35000, sidebar: 18000, directory: 15000 },
+      metro: { event: 50000, sidebar: 25000, directory: 20000 },
+    };
+    const tierOf = (pop) => (pop >= 200000 ? 'metro' : pop >= 75000 ? 'large' : pop >= 25000 ? 'medium' : 'small');
+    const capacityOf = (placement) => (placement === 'event' ? 1 : placement === 'sidebar' ? 4 : 2);
+
+    const { rows: marketCountRows } = await pool.query('SELECT COUNT(*)::int AS n FROM ad_markets');
+    if (marketCountRows[0].n === 0) {
+      for (const m of MARKETS) {
+        const tier = tierOf(m.population);
+        await pool.query(
+          `INSERT INTO ad_markets (id, name, state, cities, zip_codes, population, tier)
+           VALUES ($1, $2, $3, $4::text[], $5::text[], $6, $7)
+           ON CONFLICT (id) DO NOTHING`,
+          [m.id, m.name, m.state, m.cities, m.zipCodes, m.population, tier]
+        );
+        for (const placement of ['event', 'sidebar', 'directory']) {
+          const base = TIER_BASE[tier][placement];
+          const min = Math.round(base * 0.4);
+          const max = Math.round(base * 2);
+          await pool.query(
+            `INSERT INTO ad_rates (id, market_id, placement, base_rate_cents, current_rate_cents, min_rate_cents, max_rate_cents, capacity, filled, waitlist)
+             VALUES ($1, $2, $3, $4, $4, $5, $6, $7, 0, 0)
+             ON CONFLICT (id) DO NOTHING`,
+            [`${m.id}:${placement}`, m.id, placement, base, min, max, capacityOf(placement)]
+          );
+        }
+      }
+      console.log(`[seed] Seeded ${MARKETS.length} ad market(s) with rates.`);
+    } else {
+      console.log('[seed] Skipped — ad_markets table already has rows.');
+    }
+
     // Seed contractors only if the table is empty (never overwrites admin edits).
     const { rows: countRows } = await pool.query('SELECT COUNT(*)::int AS n FROM contractors');
     if (countRows[0].n > 0) {
