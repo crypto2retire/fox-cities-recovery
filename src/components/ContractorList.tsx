@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useMemo, type ReactNode } from "react";
+import { useState, useMemo, useEffect, type ReactNode } from "react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { CATEGORY_LABELS, OWNERSHIP_LABELS } from "@/lib";
 import type { Contractor, ContractorCategory, OwnershipType } from "@/lib";
 import { OwnershipBadge } from "@/components/OwnershipBadge";
@@ -20,12 +21,28 @@ export function ContractorList({
   heading?: string;
   subheading?: ReactNode;
 }) {
-  const [search, setSearch] = useState("");
-  const [category, setCategory] = useState<string>("all");
-  const [city, setCity] = useState<string>("all");
-  const [ownership, setOwnership] = useState<string>("all");
-  const [sort, setSort] = useState<SortOption>("credibility");
-  const [showVerifiedOnly, setShowVerifiedOnly] = useState(false);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const [search, setSearch] = useState(searchParams.get("q") ?? "");
+  const [category, setCategory] = useState<string>(searchParams.get("category") ?? "all");
+  const [city, setCity] = useState<string>(searchParams.get("city") ?? "all");
+  const [ownership, setOwnership] = useState<string>(searchParams.get("ownership") ?? "all");
+  const [sort, setSort] = useState<SortOption>((searchParams.get("sort") as SortOption) ?? "credibility");
+  const [showVerifiedOnly, setShowVerifiedOnly] = useState(searchParams.get("verified") === "1");
+
+  // Keep the URL in sync so filtered views are shareable + indexable by search engines.
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (search) params.set("q", search);
+    if (category !== "all") params.set("category", category);
+    if (city !== "all") params.set("city", city);
+    if (ownership !== "all") params.set("ownership", ownership);
+    if (sort !== "credibility") params.set("sort", sort);
+    if (showVerifiedOnly) params.set("verified", "1");
+    const qs = params.toString();
+    router.replace(qs ? `/contractors?${qs}` : "/contractors", { scroll: false });
+  }, [search, category, city, ownership, sort, showVerifiedOnly, router]);
 
   const cities = useMemo(() => {
     const unique = [...new Set(contractors.map(c => c.city))].sort();

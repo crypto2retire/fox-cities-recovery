@@ -142,6 +142,43 @@ export async function getContractors(): Promise<Contractor[]> {
   return sortByCredibility(rows.map(rowToContractor));
 }
 
+export interface ContractorSearchParams {
+  q?: string;
+  category?: string;
+  city?: string;
+  state?: string;
+}
+
+/** Server-side search across name, description, services, and city. */
+export async function searchContractors(params: ContractorSearchParams): Promise<Contractor[]> {
+  const clauses: string[] = [];
+  const vals: unknown[] = [];
+  let i = 1;
+
+  const q = params.q?.trim();
+  if (q) {
+    clauses.push(
+      `(name ILIKE $${i} OR description ILIKE $${i} OR city ILIKE $${i} OR services::text ILIKE $${i})`
+    );
+    vals.push(`%${q}%`);
+    i++;
+  }
+  if (params.category && params.category !== 'all') {
+    clauses.push(`category = $${i}`);
+    vals.push(params.category);
+    i++;
+  }
+  if (params.city && params.city !== 'all') {
+    clauses.push(`city ILIKE $${i}`);
+    vals.push(`%${params.city}%`);
+    i++;
+  }
+
+  const where = clauses.length ? `WHERE ${clauses.join(' AND ')}` : '';
+  const rows = await query<ContractorRow>(`SELECT * FROM contractors ${where}`, vals);
+  return sortByCredibility(rows.map(rowToContractor));
+}
+
 export async function getContractorById(id: string): Promise<Contractor | null> {
   const rows = await query<ContractorRow>('SELECT * FROM contractors WHERE id = $1', [id]);
   return rows.length ? rowToContractor(rows[0]) : null;

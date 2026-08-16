@@ -4,8 +4,21 @@ import { notFound } from "next/navigation";
 import { OwnershipBadge } from "@/components/OwnershipBadge";
 import { AdPlacement } from "@/components/AdPlacement";
 import { ReviewsSection } from "@/components/ReviewsSection";
+import { CATEGORY_LABELS } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const contractor = await getContractorById(id);
+  if (!contractor) return { title: "Contractor not found" };
+  const desc = contractor.description || `Local ${CATEGORY_LABELS[contractor.category] || contractor.category} in ${contractor.city}, WI. Established ${contractor.yearEstablished ?? "before the 2026 tornado"}.`;
+  return {
+    title: `${contractor.name} — ${contractor.city}, WI | Fox Cities Recovery`,
+    description: desc,
+    openGraph: { title: contractor.name, description: desc, type: "website" },
+  };
+}
 
 export default async function ContractorDetailPage({
   params,
@@ -19,8 +32,36 @@ export default async function ContractorDetailPage({
   
   const contractorReviews = await getReviewsForContractor(id);
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    name: contractor.name,
+    description: contractor.description || undefined,
+    telephone: contractor.phone || undefined,
+    email: contractor.email || undefined,
+    url: contractor.website || undefined,
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: contractor.city,
+      addressRegion: "WI",
+      addressCountry: "US",
+      streetAddress: contractor.address || undefined,
+    },
+    ...(contractor.rating != null && contractor.reviewCount != null
+      ? {
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: contractor.rating,
+            reviewCount: contractor.reviewCount,
+          },
+        }
+      : {}),
+    foundingDate: contractor.yearEstablished != null ? String(contractor.yearEstablished) : undefined,
+  };
+
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 sm:py-12">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       {/* Back link */}
       <Link href="/contractors" className="text-sm text-blue-600 hover:text-blue-800 mb-6 inline-flex items-center gap-1">
         ← Back to all contractors
