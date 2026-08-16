@@ -9,7 +9,8 @@
     "lint": "eslint",
     "db:migrate": "node scripts/migrate.mjs",
     "db:seed": "node scripts/seed.mjs",
-    "test:write": "tsx scripts/test-write.ts"
+    "test:write": "tsx scripts/test-write.ts",
+    "test:ads": "tsx scripts/test-ads.ts"
   },
   "dependencies": {
     "next": "16.2.12",

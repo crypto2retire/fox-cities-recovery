@@ -1,4 +1,4 @@
-import type { Contractor, Review, Event, EventResource } from './types';
+import type { Contractor, Review, Event, EventResource, Ad } from './types';
 import { sortByCredibility } from './credibility';
 import { query } from './db';
 
@@ -490,6 +490,62 @@ export async function getEventResources(eventId: string): Promise<EventResource[
   return rows.map(rowToEventResource);
 }
 
+// ---------------------------------------------------------------------------
+// Ads — labeled sponsor slots
+// ---------------------------------------------------------------------------
+
+interface AdRow {
+  id: string;
+  title: string;
+  url: string | null;
+  description: string | null;
+  cta_text: string | null;
+  placement: string;
+  active: boolean;
+  created_at: Date;
+}
+
+function rowToAd(row: AdRow): Ad {
+  return {
+    id: row.id,
+    title: row.title,
+    url: row.url,
+    description: row.description,
+    ctaText: row.cta_text,
+    placement: (row.placement as Ad['placement']) ?? 'sidebar',
+    active: row.active,
+  };
+}
+
+export async function getAds(): Promise<Ad[]> {
+  const rows = await query<AdRow>('SELECT * FROM ads ORDER BY created_at DESC');
+  return rows.map(rowToAd);
+}
+
+export async function getActiveAdsByPlacement(placement: string): Promise<Ad[]> {
+  const rows = await query<AdRow>(
+    'SELECT * FROM ads WHERE active = true AND placement = $1 ORDER BY created_at DESC',
+    [placement]
+  );
+  return rows.map(rowToAd);
+}
+
+export async function addAd(ad: Ad): Promise<Ad> {
+  const rows = await query<AdRow>(
+    `INSERT INTO ads (id, title, url, description, cta_text, placement, active)
+     VALUES ($1, $2, $3, $4, $5, $6, $7)
+     RETURNING *`,
+    [ad.id, ad.title, ad.url ?? null, ad.description ?? null, ad.ctaText ?? null, ad.placement, ad.active ?? true]
+  );
+  return rowToAd(rows[0]);
+}
+
+export async function deleteAd(id: string): Promise<boolean> {
+  const { getPool } = await import('./db');
+  const res = await getPool().query('DELETE FROM ads WHERE id = $1', [id]);
+  return (res.rowCount ?? 0) > 0;
+}
+
 // Categories (re-export for existing importers)
 export { CATEGORY_LABELS } from './types';
-export type { Contractor, ContractorCategory, Review, Event, Region, EventResource, EventType } from './types';
+export type { Contractor, ContractorCategory, Review, Event, Region, EventResource, EventType, Ad, AdPlacement } from './types';

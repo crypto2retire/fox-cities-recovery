@@ -8,6 +8,7 @@ import {
 } from "@/lib/data-store";
 import { EVENT_TYPE_LABELS } from "@/lib/types";
 import { ContractorList } from "@/components/ContractorList";
+import { AdPlacement } from "@/components/AdPlacement";
 
 export const dynamic = "force-dynamic";
 
@@ -106,6 +107,11 @@ export default async function StormPage({
           }
         />
       </section>
+
+      {/* Event sponsor slot */}
+      <div className="max-w-4xl mx-auto px-4 -mt-4 pb-4">
+        <AdPlacement variant="event" />
+      </div>
 
       {/* Resources */}
       <section id="resources" className="bg-gray-50 py-14">

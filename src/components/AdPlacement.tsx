@@ -1,79 +1,98 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
-// Ad placements that rotate based on available inventory
-// In production, these would come from an ad server or data file
-const AD_INVENTORY = [
-  {
-    headline: "Your Business Here",
-    body: "Reach Fox Cities homeowners actively looking for contractors. Listings are free — ads are how local businesses get extra visibility.",
-    cta: "Learn About Advertising",
-    link: "mailto:ads@foxcitiesrecovery.com",
-    background: "from-amber-50 to-yellow-50",
-    border: "border-amber-300",
-  },
-  {
-    headline: "Local Business?",
-    body: "Get in front of tornado victims searching for help right now. Clearly labeled ads — no tricks, no paid rankings.",
-    cta: "Advertise Here",
-    link: "mailto:ads@foxcitiesrecovery.com",
-    background: "from-blue-50 to-indigo-50",
-    border: "border-blue-300",
-  },
-];
+interface Ad {
+  id: string;
+  title: string;
+  url: string | null;
+  description: string | null;
+  ctaText: string | null;
+  placement: string;
+  active: boolean;
+}
+
+// Map a component variant to a database placement.
+const PLACEMENT_BY_VARIANT: Record<string, string> = {
+  sidebar: "sidebar",
+  inline: "sidebar",
+  banner: "directory",
+  event: "event",
+};
 
 interface AdPlacementProps {
-  variant?: "sidebar" | "inline" | "banner";
+  variant?: "sidebar" | "inline" | "banner" | "event";
   className?: string;
 }
 
 export function AdPlacement({ variant = "sidebar", className = "" }: AdPlacementProps) {
-  const [adIndex, setAdIndex] = useState(0);
+  const placement = PLACEMENT_BY_VARIANT[variant] ?? "sidebar";
+  const [ads, setAds] = useState<Ad[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Rotate ads if multiple available
-    if (AD_INVENTORY.length > 1) {
-      setAdIndex(Math.floor(Math.random() * AD_INVENTORY.length));
-    }
-  }, []);
+    let cancelled = false;
+    fetch(`/api/ads?placement=${placement}`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (!cancelled) setAds(Array.isArray(data) ? data : []);
+      })
+      .catch(() => {
+        if (!cancelled) setAds([]);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [placement]);
 
-  const ad = AD_INVENTORY[adIndex];
+  if (loading) return null;
 
-  if (variant === "banner") {
+  const ad = ads[0];
+
+  // No sponsor yet — show a self-serve placeholder that points to the sponsor page.
+  if (!ad) {
     return (
-      <div className={`bg-gradient-to-r ${ad.background} border-2 border-dashed ${ad.border} rounded-xl p-5 text-center ${className}`}>
-        <p className="text-xs text-amber-700 font-bold tracking-wide uppercase mb-2">Advertisement</p>
-        <p className="font-semibold text-gray-800 mb-1">{ad.headline}</p>
-        <p className="text-sm text-gray-600 mb-3">{ad.body}</p>
-        <a href={ad.link} className="text-sm text-amber-700 font-bold hover:underline">
-          {ad.cta} →
+      <div className={`border-2 border-dashed border-gray-300 rounded-xl p-4 text-center ${className}`}>
+        <p className="text-xs text-gray-400 font-bold tracking-wide uppercase mb-2">Advertisement</p>
+        <p className="text-sm font-semibold text-gray-500 mb-1">Sponsor this spot</p>
+        <p className="text-xs text-gray-400 mb-2">
+          Reach {placement === "event" ? "tornado-affected residents" : "homeowners hiring contractors"} right now.
+        </p>
+        <a href="/sponsor" className="text-xs text-blue-600 font-semibold hover:underline">
+          Advertise here →
         </a>
       </div>
     );
   }
 
-  if (variant === "inline") {
+  const cta = ad.ctaText || "Learn More";
+  const href = ad.url || "/sponsor";
+  const external = ad.url ? { target: "_blank", rel: "noopener noreferrer" } : {};
+
+  if (variant === "banner" || variant === "event") {
     return (
-      <div className={`bg-gradient-to-r ${ad.background} border-2 border-dashed ${ad.border} rounded-xl p-5 text-center ${className}`}>
+      <div className={`bg-gradient-to-r from-amber-50 to-yellow-50 border-2 border-dashed border-amber-300 rounded-xl p-6 text-center ${className}`}>
         <p className="text-xs text-amber-700 font-bold tracking-wide uppercase mb-2">Advertisement</p>
-        <p className="font-semibold text-gray-800 mb-1">{ad.headline}</p>
-        <p className="text-sm text-gray-600 mb-3">{ad.body}</p>
-        <a href={ad.link} className="text-sm text-amber-700 font-bold hover:underline">
-          {ad.cta} →
+        <p className="font-bold text-gray-800 text-lg mb-1">{ad.title}</p>
+        {ad.description && <p className="text-sm text-gray-600 mb-3">{ad.description}</p>}
+        <a href={href} {...external} className="text-sm text-amber-700 font-bold hover:underline">
+          {cta} →
         </a>
       </div>
     );
   }
 
-  // sidebar — default
+  // sidebar (default)
   return (
-    <div className={`bg-gradient-to-br ${ad.background} rounded-xl border-2 border-dashed ${ad.border} p-4 text-center ${className}`}>
+    <div className={`bg-gradient-to-br from-amber-50 to-yellow-50 rounded-xl border-2 border-dashed border-amber-300 p-4 text-center ${className}`}>
       <p className="text-xs text-amber-700 font-bold tracking-wide uppercase mb-2">Advertisement</p>
-      <p className="font-semibold text-gray-800 text-sm mb-1">{ad.headline}</p>
-      <p className="text-xs text-gray-500 mb-3">{ad.body}</p>
-      <a href={ad.link} className="text-xs text-amber-700 font-bold hover:underline">
-        {ad.cta} →
+      <p className="font-semibold text-gray-800 text-sm mb-1">{ad.title}</p>
+      {ad.description && <p className="text-xs text-gray-500 mb-3">{ad.description}</p>}
+      <a href={href} {...external} className="text-xs text-amber-700 font-bold hover:underline">
+        {cta} →
       </a>
     </div>
   );

@@ -47,6 +47,9 @@ export default function AdminDashboard() {
           <Link href="/admin/reviews" className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg text-sm transition-colors">
             Reviews
           </Link>
+          <Link href="/admin/ads" className="bg-amber-500 hover:bg-amber-600 text-white font-semibold py-2 px-4 rounded-lg text-sm transition-colors">
+            Ads
+          </Link>
           <Link href="/" className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg text-sm transition-colors">
             View Site
           </Link>

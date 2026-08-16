@@ -51,6 +51,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <ul className="space-y-2 text-sm">
                 <li><Link href="/contractors" className="hover:text-white transition-colors">Find Local Contractors</Link></li>
                 <li><Link href="/resources" className="hover:text-white transition-colors">Disaster Resources</Link></li>
+                <li><Link href="/sponsor" className="hover:text-white transition-colors">Sponsor / Advertise</Link></li>
                 <li><Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
               </ul>
             </div>

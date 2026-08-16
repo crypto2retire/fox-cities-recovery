@@ -161,3 +161,25 @@ export interface EventResource {
   verifiedDate: string | null;
   source: string | null;
 }
+
+// ---------------------------------------------------------------------------
+// Ads — labeled sponsor slots (never part of listings)
+// ---------------------------------------------------------------------------
+
+export type AdPlacement = 'sidebar' | 'directory' | 'event';
+
+export const AD_PLACEMENT_LABELS: Record<AdPlacement, string> = {
+  sidebar: 'Sidebar (contractor detail pages)',
+  directory: 'Directory Banner (bottom of contractor list)',
+  event: 'Event Sponsor (storm landing page)',
+};
+
+export interface Ad {
+  id: string;
+  title: string;
+  url: string | null;
+  description: string | null;
+  ctaText: string | null;
+  placement: AdPlacement;
+  active: boolean;
+}

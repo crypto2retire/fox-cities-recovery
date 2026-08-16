@@ -140,9 +140,9 @@ export default async function Home() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a href="mailto:listings@foxcitiesrecovery.com" className="btn-accent">Get Listed — Free</a>
-            <a href="mailto:ads@foxcitiesrecovery.com" className="bg-white/10 hover:bg-white/20 border border-white/30 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
+            <Link href="/sponsor" className="bg-white/10 hover:bg-white/20 border border-white/30 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
               Advertise Here
-            </a>
+            </Link>
           </div>
           <p className="text-xs text-blue-300 mt-4">Listings are always free. Advertisements are separate and clearly labeled.</p>
         </div>
