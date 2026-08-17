@@ -24,10 +24,14 @@ export function ContractorList({
   subheading = (
     <>Every contractor listed here was established in the Fox Cities <strong>before</strong> the July 27, 2026 tornado. No storm chasers — just businesses that are part of this community.</>
   ),
+  scanned = false,
+  scannedCategory,
 }: {
   contractors: Contractor[];
   heading?: string;
   subheading?: ReactNode;
+  scanned?: boolean;
+  scannedCategory?: string;
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -106,6 +110,16 @@ export function ContractorList({
         <h1 className="text-3xl sm:text-4xl font-extrabold mb-3">{heading}</h1>
         <p className="text-muted max-w-2xl">{subheading}</p>
       </div>
+
+      {scanned && (
+        <div className="mb-6 flex items-start gap-3 rounded-xl border border-brand-200 bg-brand-50 px-4 py-3 text-sm">
+          <span className="text-lg leading-none mt-0.5">🔍</span>
+          <p>
+            <strong className="font-semibold text-ink">We just expanded this directory.</strong>{" "}
+            While searching, we found additional local{scannedCategory ? ` ${CATEGORY_LABELS[scannedCategory as ContractorCategory] ?? scannedCategory}` : ""} businesses and added them. New listings are marked <em className="not-italic font-medium">Not verified</em> until we confirm they were local before the storm.
+          </p>
+        </div>
+      )}
 
       {/* Search + filters */}
       <div className="rounded-2xl border border-gray-200/70 bg-white shadow-[0_1px_3px_rgba(7,17,31,0.05),0_12px_32px_-20px_rgba(7,17,31,0.18)] p-4 sm:p-5 mb-8">
