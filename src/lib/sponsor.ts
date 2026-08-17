@@ -65,7 +65,7 @@ export const PAYMENT_LINKS: Record<string, string> = {
   directory: "",
 };
 
-export const ADS_CONTACT_EMAIL = "ads@donelocal.com";
+export const ADS_CONTACT_EMAIL = "ads@foxcitiesrecovery.com";
 
 export function getSponsorAction(id: string): { href: string; label: string; external: boolean } {
   const link = PAYMENT_LINKS[id];

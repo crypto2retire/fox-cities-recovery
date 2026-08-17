@@ -129,10 +129,10 @@ export default function PrivacyPage() {
       <section className="bg-gray-50 rounded-xl p-6">
         <h2 className="text-lg font-bold mb-2">Privacy questions?</h2>
         <p className="text-gray-600 text-sm mb-3">
-          This site is run by people in your community, not a faceless corporation. Reach us directly:
+          This site is run by people in the Fox Cities, not a faceless corporation. Reach us directly:
         </p>
-        <a href="mailto:privacy@donelocal.com" className="btn-primary text-sm">
-          ✉️ privacy@donelocal.com
+        <a href="mailto:privacy@foxcitiesrecovery.com" className="btn-primary text-sm">
+          ✉️ privacy@foxcitiesrecovery.com
         </a>
         <p className="text-xs text-gray-400 mt-4">
           <Link href="/" className="hover:text-gray-600">← Back to home</Link>

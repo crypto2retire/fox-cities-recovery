@@ -61,7 +61,6 @@ export const OWNERSHIP_COLORS: Record<OwnershipType, { bg: string; text: string;
 };
 
 export type ContractorCategory =
-  // Trades & home services
   | 'home-builder'
   | 'roofing'
   | 'general-contractor'
@@ -75,22 +74,6 @@ export type ContractorCategory =
   | 'structural-repair'
   | 'insurance-adjuster'
   | 'debris-removal'
-  // Food & drink
-  | 'restaurant'
-  | 'cafe'
-  | 'bakery'
-  | 'bar-brewery'
-  | 'grocery'
-  // Retail
-  | 'retail'
-  // Personal & professional services
-  | 'salon-barber'
-  | 'spa-wellness'
-  | 'auto-repair'
-  | 'gym-fitness'
-  | 'childcare'
-  | 'pet-services'
-  | 'professional-services'
   | 'other';
 
 export const CATEGORY_LABELS: Record<ContractorCategory, string> = {
@@ -107,19 +90,6 @@ export const CATEGORY_LABELS: Record<ContractorCategory, string> = {
   'structural-repair': 'Structural Repair',
   'insurance-adjuster': 'Insurance Adjuster',
   'debris-removal': 'Debris Removal',
-  'restaurant': 'Restaurants',
-  'cafe': 'Cafés & Coffee',
-  'bakery': 'Bakeries',
-  'bar-brewery': 'Bars & Breweries',
-  'grocery': 'Grocery & Markets',
-  'retail': 'Retail & Shops',
-  'salon-barber': 'Salons & Barbers',
-  'spa-wellness': 'Spas & Wellness',
-  'auto-repair': 'Auto Repair',
-  'gym-fitness': 'Gyms & Fitness',
-  'childcare': 'Childcare & Learning',
-  'pet-services': 'Pet Services',
-  'professional-services': 'Professional Services',
   'other': 'Other Services',
 };
 

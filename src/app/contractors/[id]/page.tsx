@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   if (!contractor) return { title: "Contractor not found" };
   const desc = contractor.description || `Local ${CATEGORY_LABELS[contractor.category] || contractor.category} in ${contractor.city}, WI. Established ${contractor.yearEstablished ?? "before the 2026 tornado"}.`;
   return {
-    title: `${contractor.name} — ${contractor.city}, WI | DoneLocal`,
+    title: `${contractor.name} — ${contractor.city}, WI | Fox Cities Recovery`,
     description: desc,
     openGraph: { title: contractor.name, description: desc, type: "website" },
   };
@@ -64,7 +64,7 @@ export default async function ContractorDetailPage({
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
       <Link href="/contractors" className="text-sm text-brand-600 hover:text-brand-700 mb-6 inline-flex items-center gap-1 font-medium">
-        ← Back to all businesses
+        ← Back to all contractors
       </Link>
 
       {/* Header */}

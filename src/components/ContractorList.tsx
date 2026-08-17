@@ -20,9 +20,9 @@ const OWNERSHIP_OPTIONS: [OwnershipType, string][] = [
 
 export function ContractorList({
   contractors,
-  heading = "Local Businesses",
+  heading = "Local Contractors",
   subheading = (
-    <>Every business listed here is locally-owned — retail, food, services, and trades. No paid rankings, no lead-selling — just businesses that are part of your community.</>
+    <>Every contractor listed here was established in the Fox Cities <strong>before</strong> the July 27, 2026 tornado. No storm chasers — just businesses that are part of this community.</>
   ),
 }: {
   contractors: Contractor[];
@@ -174,14 +174,14 @@ export function ContractorList({
 
       {/* Results count */}
       <div className="mb-5 text-sm text-muted">
-        <strong className="text-ink">{filtered.length}</strong> business{filtered.length !== 1 ? "es" : ""} found
+        <strong className="text-ink">{filtered.length}</strong> contractor{filtered.length !== 1 ? "s" : ""} found
         {contractors.length !== filtered.length && <> (from {contractors.length} total)</>}
       </div>
 
       {filtered.length === 0 ? (
         <div className="text-center py-20 text-muted">
           <div className="text-5xl mb-4">🔍</div>
-          <p className="text-lg font-semibold text-ink">No businesses match your filters</p>
+          <p className="text-lg font-semibold text-ink">No contractors match your filters</p>
           <p className="text-sm mt-2">Try adjusting your search or category.</p>
           {hasActiveFilters && (
             <button
@@ -198,7 +198,7 @@ export function ContractorList({
           {filtered.map(c => (
             <Link key={c.id} href={`/contractors/${c.id}`} className="card card-hover group flex flex-col">
               <div className="flex items-start justify-between mb-3">
-                <span className="badge-category">{CATEGORY_LABELS[c.category]}</span>
+                <span className="badge-category capitalize">{c.category.replace(/-/g, " ")}</span>
                 <div className="flex items-center gap-1.5">
                   <OwnershipBadge type={c.ownershipType} compact />
                   {c.verified && (
