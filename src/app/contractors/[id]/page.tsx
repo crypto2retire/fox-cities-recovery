@@ -27,9 +27,9 @@ export default async function ContractorDetailPage({
 }) {
   const { id } = await params;
   const contractor = await getContractorById(id);
-  
+
   if (!contractor) notFound();
-  
+
   const contractorReviews = await getReviewsForContractor(id);
 
   const jsonLd = {
@@ -62,51 +62,48 @@ export default async function ContractorDetailPage({
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 sm:py-12">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      {/* Back link */}
-      <Link href="/contractors" className="text-sm text-blue-600 hover:text-blue-800 mb-6 inline-flex items-center gap-1">
+
+      <Link href="/contractors" className="text-sm text-brand-600 hover:text-brand-700 mb-6 inline-flex items-center gap-1 font-medium">
         ← Back to all contractors
       </Link>
 
       {/* Header */}
-      <div className="bg-white rounded-xl shadow-sm border p-6 sm:p-8 mb-8">
+      <div className="rounded-2xl border border-gray-200/70 bg-white shadow-[0_1px_3px_rgba(7,17,31,0.05),0_12px_32px_-20px_rgba(7,17,31,0.18)] p-6 sm:p-8 mb-8">
         <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
           <div>
-            <div className="flex items-center gap-3 flex-wrap mb-2">
+            <div className="flex items-center gap-2.5 flex-wrap mb-3">
               <h1 className="text-2xl sm:text-3xl font-extrabold">{contractor.name}</h1>
               <OwnershipBadge type={contractor.ownershipType} />
               {contractor.verified && (
-                <span className="badge-verified text-sm">
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/></svg>
+                <span className="badge-verified">
+                  <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
                   Verified Local Business
                 </span>
               )}
             </div>
-            <p className="text-gray-500">
+            <p className="text-muted">
               {contractor.city}, WI
               {contractor.yearEstablished != null
                 ? ` · Established ${contractor.yearEstablished} · ${new Date().getFullYear() - contractor.yearEstablished}+ years serving Fox Cities`
-                : ' · Established year not verified'}
+                : " · Established year not verified"}
             </p>
           </div>
         </div>
 
-        <p className="text-gray-700 mt-4">{contractor.description}</p>
+        <p className="text-ink/80 mt-4 leading-relaxed">{contractor.description}</p>
 
-        {/* Rating */}
         <div className="flex items-center gap-3 mt-6">
-          <div className="flex items-center gap-1">
-            {contractor.rating != null ? (
-              <>
-                <span className="text-3xl font-bold text-amber-500">★ {contractor.rating}</span>
-                <span className="text-gray-400 text-sm">({contractor.reviewCount} reviews)</span>
-              </>
-            ) : (
-              <span className="text-gray-400 text-sm">Rating not yet verified</span>
-            )}
-          </div>
+          {contractor.rating != null ? (
+            <span className="inline-flex items-center gap-2">
+              <span className="text-3xl font-extrabold text-amber-500">★ {contractor.rating}</span>
+              <span className="text-muted text-sm">({contractor.reviewCount} reviews)</span>
+            </span>
+          ) : (
+            <span className="text-muted text-sm">Rating not yet verified</span>
+          )}
           {contractor.insuranceVerified && (
-            <span className="badge-verified text-sm">
-              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/></svg>
+            <span className="badge-verified">
+              <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
               Insurance Verified
             </span>
           )}
@@ -117,61 +114,57 @@ export default async function ContractorDetailPage({
         {/* Main content */}
         <div className="sm:col-span-2 space-y-8">
           {/* Services */}
-          <div className="bg-white rounded-xl shadow-sm border p-6">
+          <div className="card">
             <h2 className="font-bold text-lg mb-4">Services Offered</h2>
             <div className="flex flex-wrap gap-2">
               {contractor.services.map(s => (
-                <span key={s} className="bg-blue-50 text-blue-700 px-3 py-1.5 rounded-lg text-sm font-medium">{s}</span>
+                <span key={s} className="pill bg-brand-50 text-brand-700 border border-brand-100">{s}</span>
               ))}
             </div>
           </div>
 
           {/* Contact */}
-          <div className="bg-white rounded-xl shadow-sm border p-6">
+          <div className="card">
             <h2 className="font-bold text-lg mb-4">Contact Information</h2>
             <div className="space-y-3">
-              <div className="flex items-center gap-3">
-                <span className="text-xl">📞</span>
-                <a href={`tel:${contractor.phone.replace(/[^\d]/g, '')}`} className="text-blue-600 hover:text-blue-800 font-medium text-lg">
-                  {contractor.phone}
-                </a>
-              </div>
+              {contractor.phone && (
+                <div className="flex items-center gap-3">
+                  <span className="grid place-items-center w-9 h-9 rounded-lg bg-brand-50 text-lg">📞</span>
+                  <a href={`tel:${contractor.phone.replace(/[^\d]/g, "")}`} className="text-brand-600 hover:text-brand-700 font-semibold text-lg">
+                    {contractor.phone}
+                  </a>
+                </div>
+              )}
               {contractor.email && (
                 <div className="flex items-center gap-3">
-                  <span className="text-xl">✉️</span>
-                  <a href={`mailto:${contractor.email}`} className="text-blue-600 hover:text-blue-800">
-                    {contractor.email}
-                  </a>
+                  <span className="grid place-items-center w-9 h-9 rounded-lg bg-brand-50 text-lg">✉️</span>
+                  <a href={`mailto:${contractor.email}`} className="text-brand-600 hover:text-brand-700">{contractor.email}</a>
                 </div>
               )}
               {contractor.website && (
                 <div className="flex items-center gap-3">
-                  <span className="text-xl">🌐</span>
-                  <a href={contractor.website} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800">
-                    {contractor.website.replace('https://', '').replace('www.', '')}
+                  <span className="grid place-items-center w-9 h-9 rounded-lg bg-brand-50 text-lg">🌐</span>
+                  <a href={contractor.website} target="_blank" rel="noopener noreferrer" className="text-brand-600 hover:text-brand-700">
+                    {contractor.website.replace("https://", "").replace("www.", "")}
                   </a>
                 </div>
               )}
               {(contractor.facebookUrl || contractor.instagramUrl) && (
                 <div className="flex items-center gap-3 pt-1">
-                  <span className="text-xl">📣</span>
+                  <span className="grid place-items-center w-9 h-9 rounded-lg bg-brand-50 text-lg">📣</span>
                   <div className="flex gap-4">
                     {contractor.facebookUrl && (
-                      <a href={contractor.facebookUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 font-medium">
-                        Facebook
-                      </a>
+                      <a href={contractor.facebookUrl} target="_blank" rel="noopener noreferrer" className="text-brand-600 hover:text-brand-700 font-medium">Facebook</a>
                     )}
                     {contractor.instagramUrl && (
-                      <a href={contractor.instagramUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 font-medium">
-                        Instagram
-                      </a>
+                      <a href={contractor.instagramUrl} target="_blank" rel="noopener noreferrer" className="text-brand-600 hover:text-brand-700 font-medium">Instagram</a>
                     )}
                   </div>
                 </div>
               )}
               <div className="flex items-center gap-3">
-                <span className="text-xl">📍</span>
-                <span className="text-gray-700">{contractor.address}</span>
+                <span className="grid place-items-center w-9 h-9 rounded-lg bg-brand-50 text-lg">📍</span>
+                <span className="text-ink/80">{contractor.address}</span>
               </div>
             </div>
           </div>
@@ -187,43 +180,47 @@ export default async function ContractorDetailPage({
         {/* Sidebar */}
         <div className="space-y-6">
           {/* Ownership transparency */}
-          <div className="bg-white rounded-xl shadow-sm border p-4">
+          <div className="card !p-5">
             <h3 className="font-bold text-sm mb-2">Business Ownership</h3>
             <div className="flex items-center gap-2 mb-2">
               <OwnershipBadge type={contractor.ownershipType} />
             </div>
             {contractor.ownershipNotes && (
-              <p className="text-xs text-gray-500">{contractor.ownershipNotes}</p>
+              <p className="text-xs text-muted">{contractor.ownershipNotes}</p>
             )}
-            <p className="text-xs text-gray-400 mt-2">
-              <strong>Why this matters:</strong> Locally owned businesses typically offer more flexible pricing, personalized service, and direct accountability. PE-backed and corporate contractors may have standardized pricing models designed to maximize investor returns.
+            <p className="text-xs text-muted mt-2 leading-relaxed">
+              <strong className="text-ink">Why this matters:</strong> Locally owned businesses typically offer more flexible
+              pricing, personalized service, and direct accountability. PE-backed and corporate contractors may use
+              standardized pricing models designed to maximize investor returns.
             </p>
           </div>
 
           {/* Quick contact CTA */}
-          <div className="bg-blue-700 text-white rounded-xl p-6 text-center sticky top-24">
+          <div className="bg-navy-900 text-white rounded-2xl p-6 text-center sticky top-24">
             <h3 className="font-bold text-lg mb-2">Need Help Now?</h3>
-            <a 
-              href={`tel:${contractor.phone.replace(/[^\d]/g, '')}`} 
-              className="block w-full bg-white text-blue-700 font-bold py-3 px-4 rounded-lg hover:bg-blue-50 transition-colors mb-3"
-            >
-              📞 Call Now
-            </a>
+            {contractor.phone && (
+              <a
+                href={`tel:${contractor.phone.replace(/[^\d]/g, "")}`}
+                className="block w-full bg-brand-500 text-white font-bold py-3 px-4 rounded-full hover:bg-brand-400 transition-colors mb-3"
+              >
+                📞 Call Now
+              </a>
+            )}
             {contractor.email && (
-              <a 
+              <a
                 href={`mailto:${contractor.email}`}
-                className="block w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 px-4 rounded-lg transition-colors text-sm"
+                className="block w-full bg-white/10 hover:bg-white/20 text-white font-medium py-2.5 px-4 rounded-full transition-colors text-sm"
               >
                 ✉️ Send Email
               </a>
             )}
             <Link
               href={`/request?contractor=${contractor.id}`}
-              className="block w-full bg-green-600 hover:bg-green-500 text-white font-bold py-2.5 px-4 rounded-lg transition-colors text-sm mt-2"
+              className="block w-full bg-amber-400 hover:bg-amber-300 text-navy-950 font-bold py-2.5 px-4 rounded-full transition-colors text-sm mt-2"
             >
               📋 Request a Quote
             </Link>
-            <p className="text-blue-200 text-xs mt-4">
+            <p className="text-blue-100/60 text-xs mt-4">
               Free estimates available for tornado-affected properties
             </p>
           </div>

@@ -26,7 +26,6 @@ const PLACEMENT_BY_VARIANT: Record<string, string> = {
 interface AdPlacementProps {
   variant?: "sidebar" | "inline" | "banner" | "event";
   className?: string;
-  // Geo context — passed from the page so ads can be zip/city/state targeted.
   city?: string | null;
   state?: string | null;
   zip?: string | null;
@@ -73,13 +72,13 @@ export function AdPlacement({
   // No sponsor yet — show a self-serve placeholder that points to the sponsor page.
   if (!ad) {
     return (
-      <div className={`border-2 border-dashed border-gray-300 rounded-xl p-4 text-center ${className}`}>
-        <p className="text-xs text-gray-400 font-bold tracking-wide uppercase mb-2">Advertisement</p>
-        <p className="text-sm font-semibold text-gray-500 mb-1">Sponsor this spot</p>
-        <p className="text-xs text-gray-400 mb-2">
+      <div className={`rounded-2xl border-2 border-dashed border-gray-200 bg-surface/60 p-5 text-center ${className}`}>
+        <p className="text-[10px] font-bold tracking-[0.18em] uppercase text-muted mb-2">Advertisement</p>
+        <p className="text-sm font-semibold text-ink mb-1">Sponsor this spot</p>
+        <p className="text-xs text-muted mb-3">
           Reach {placement === "event" ? "tornado-affected residents" : "homeowners hiring contractors"} right now.
         </p>
-        <a href="/sponsor" className="text-xs text-blue-600 font-semibold hover:underline">
+        <a href="/sponsor" className="text-xs text-brand-600 font-semibold hover:underline">
           Advertise here →
         </a>
       </div>
@@ -92,11 +91,11 @@ export function AdPlacement({
 
   if (variant === "banner" || variant === "event") {
     return (
-      <div className={`bg-gradient-to-r from-amber-50 to-yellow-50 border-2 border-dashed border-amber-300 rounded-xl p-6 text-center ${className}`}>
-        <p className="text-xs text-amber-700 font-bold tracking-wide uppercase mb-2">Advertisement</p>
-        <p className="font-bold text-gray-800 text-lg mb-1">{ad.title}</p>
-        {ad.description && <p className="text-sm text-gray-600 mb-3">{ad.description}</p>}
-        <a href={href} {...external} className="text-sm text-amber-700 font-bold hover:underline">
+      <div className={`rounded-2xl border border-amber-200 bg-gradient-to-r from-amber-50 to-yellow-50 p-6 text-center ${className}`}>
+        <p className="text-[10px] font-bold tracking-[0.18em] uppercase text-amber-600 mb-2">Advertisement</p>
+        <p className="font-bold text-ink text-lg mb-1">{ad.title}</p>
+        {ad.description && <p className="text-sm text-muted mb-3">{ad.description}</p>}
+        <a href={href} {...external} className="inline-flex items-center gap-1 text-sm text-amber-700 font-bold hover:underline">
           {cta} →
         </a>
       </div>
@@ -105,10 +104,10 @@ export function AdPlacement({
 
   // sidebar (default)
   return (
-    <div className={`bg-gradient-to-br from-amber-50 to-yellow-50 rounded-xl border-2 border-dashed border-amber-300 p-4 text-center ${className}`}>
-      <p className="text-xs text-amber-700 font-bold tracking-wide uppercase mb-2">Advertisement</p>
-      <p className="font-semibold text-gray-800 text-sm mb-1">{ad.title}</p>
-      {ad.description && <p className="text-xs text-gray-500 mb-3">{ad.description}</p>}
+    <div className={`rounded-2xl border border-amber-200 bg-gradient-to-br from-amber-50 to-yellow-50 p-4 text-center ${className}`}>
+      <p className="text-[10px] font-bold tracking-[0.18em] uppercase text-amber-600 mb-2">Advertisement</p>
+      <p className="font-semibold text-ink text-sm mb-1">{ad.title}</p>
+      {ad.description && <p className="text-xs text-muted mb-3">{ad.description}</p>}
       <a href={href} {...external} className="text-xs text-amber-700 font-bold hover:underline">
         {cta} →
       </a>
