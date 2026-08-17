@@ -76,41 +76,51 @@ export async function searchWithScan(
 ): Promise<SearchWithScanResult> {
   const q = params.q?.trim() || undefined;
   const cityParam = params.city && params.city !== 'all' ? params.city : undefined;
+  const explicitCategory = params.category && params.category !== 'all' ? params.category : undefined;
 
-  // Resolve a category: explicit param wins, else map the free-text query.
-  const rawCategory = params.category && params.category !== 'all' ? params.category : undefined;
-  const mapped = rawCategory ? (rawCategory as ContractorCategory) : mapQueryToCategory(q);
-  const category = mapped && VALID_CATEGORIES.has(mapped) ? mapped : undefined;
+  // Resolve a category for scan targeting: explicit param wins, else map from q.
+  const resolvedCategory = explicitCategory
+    ? (VALID_CATEGORIES.has(explicitCategory) ? (explicitCategory as ContractorCategory) : undefined)
+    : mapQueryToCategory(q);
 
-  // When we resolve a category, search by category (the query is category intent);
-  // otherwise fall back to a free-text search.
-  const effectiveQ = category ? undefined : q;
-  const args = { q: effectiveQ, category, city: cityParam, state: params.state || undefined };
+  // Primary search: fuzzy q + explicit category — preserves the original
+  // text-match behavior (so "roofing" also catches general contractors that
+  // mention roofing in their services).
+  let results = await searchContractors({
+    q,
+    category: explicitCategory,
+    city: cityParam,
+    state: params.state || undefined,
+  });
 
-  let results = await searchContractors(args);
+  // Fallback: a q that maps to a category but has no fuzzy text match
+  // (e.g. "mold remediation" → water-damage) → search that category directly.
+  if (results.length === 0 && !explicitCategory && resolvedCategory) {
+    results = await searchContractors({ category: resolvedCategory, city: cityParam });
+  }
 
-  const hasFilter = Boolean(effectiveQ || category);
-  // Only cold markets (no results) with a meaningful filter are scan-worthy.
+  const hasFilter = Boolean(q || explicitCategory);
+  // Only cold markets (still nothing) with a meaningful filter are scan-worthy.
   if (results.length > 0 || !hasFilter) {
     return { results, scanned: false };
   }
 
   // Guard rails: need a known category, and (in production) an LLM key.
   // An injected `scanner` (tests) bypasses the key guard.
-  if (!category) return { results, scanned: false };
+  if (!resolvedCategory) return { results, scanned: false };
   if (!scanner && !llmConfigured()) return { results, scanned: false };
 
   const city = cityParam || DEFAULT_SCAN_CITY;
   const state = params.state || DEFAULT_SCAN_STATE;
 
   try {
-    const outcome = await scanAndIngestMarket(city, state, category, scanner);
+    const outcome = await scanAndIngestMarket(city, state, resolvedCategory, scanner);
     // Re-search by the resolved category so newly-scanned listings surface.
-    results = await searchContractors({ category, city: cityParam });
+    results = await searchContractors({ category: resolvedCategory, city: cityParam });
     return {
       results,
       scanned: outcome.count > 0,
-      scannedCategory: category,
+      scannedCategory: resolvedCategory,
       scannedCity: city,
       scannedState: state,
     };
