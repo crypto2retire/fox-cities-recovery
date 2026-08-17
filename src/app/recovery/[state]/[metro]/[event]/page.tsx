@@ -168,7 +168,7 @@ export default async function StormPage({
             Every local business gets equal visibility — no paid rankings.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="mailto:listings@foxcitiesrecovery.com" className="btn-gold">Get Listed — Free</a>
+            <a href="mailto:listings@donelocal.com" className="btn-gold">Get Listed — Free</a>
             <Link href="/contractors" className="btn-ghost">Browse All Contractors</Link>
           </div>
           <p className="text-xs text-blue-100/50 mt-5">Listings are always free. Advertisements are separate and clearly labeled.</p>

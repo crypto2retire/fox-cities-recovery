@@ -91,7 +91,7 @@ export default function ResourcesPage() {
         <div className="mt-14 rounded-2xl bg-brand-50 border border-brand-100 p-8 text-center">
           <h3 className="text-lg font-bold mb-2">Did we miss something?</h3>
           <p className="text-muted text-sm mb-5">If you know of a resource that should be listed here, please let us know.</p>
-          <a href="mailto:resources@foxcitiesrecovery.com" className="btn-primary !py-2.5 text-sm">
+          <a href="mailto:resources@donelocal.com" className="btn-primary !py-2.5 text-sm">
             Suggest a Resource
           </a>
         </div>

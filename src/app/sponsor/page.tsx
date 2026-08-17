@@ -9,7 +9,7 @@ export default function SponsorPage() {
         <div className="text-4xl mb-3">📣</div>
         <h1 className="text-3xl sm:text-4xl font-extrabold mb-3">Sponsor This Site</h1>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Reach Fox Cities residents who just had their homes damaged and are actively hiring —
+          Reach local residents actively searching for businesses and services —
           at the exact moment they need help.
         </p>
       </div>
