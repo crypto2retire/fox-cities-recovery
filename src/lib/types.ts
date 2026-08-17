@@ -269,6 +269,32 @@ export interface HelpTicket {
   updatedAt?: string | null;
 }
 
+// ---------------------------------------------------------------------------
+// Accounts (identity — consumer + business)
+// ---------------------------------------------------------------------------
+
+export type AccountRole = 'consumer' | 'business';
+
+export interface Account {
+  id: string;
+  role: AccountRole;
+  email: string;
+  name: string;
+  listingId?: string | null;       // business only
+  verificationStatus: 'unverified' | 'verified';
+  createdAt: string;
+}
+
+/** Public shape — never expose password_hash. */
+export interface PublicAccount {
+  id: string;
+  role: AccountRole;
+  email: string;
+  name: string;
+  listingId: string | null;
+  verificationStatus: 'unverified' | 'verified';
+}
+
 export interface ScannedCompetitor {
   name: string;
   website?: string | null;

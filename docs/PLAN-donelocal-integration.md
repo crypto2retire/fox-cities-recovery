@@ -266,7 +266,44 @@ env/gitignored files. Non-negotiable — it's a live security-camera password in
 
 ---
 
-## 8. Explicit non-goals (kept out of scope on purpose)
+## 8. Long-term moat — local human operators ("Local Ambassadors")
+
+The one thing Google/Facebook/Yelp will never structurally match: **a real local person on the
+ground.** Long-term, each metro gets a **Local Ambassador** — someone who knows the area, verifies
+businesses in person, and (critically) responds fast when a disaster hits to get real local
+resources listed and local businesses vetted.
+
+Why this is a moat, not a feature:
+- **Legitimacy is the trust problem.** The directory's whole pitch is "verified, real, local." A
+  remote scraper can't tell a 30-year family roofer from a storm chaser who incorporated last week.
+  A neighbor can, instantly. That judgment is what makes the data worth trusting — and it's
+  exactly what no tech monopoly can automate away.
+- **Disaster response speed compounds.** When the next storm hits a metro, the ambassador who's
+  already there can stand up a real, populated recovery page in a day — while a centralized
+  platform is still figuring out which ZIP codes are even affected.
+- **It feeds every other system:** the CRM (who's actually hiring local subs), BMM-POS (who's a
+  real local shop vs. drop-shipper), the camera installs (who needs StoreWatch on-site), and the
+  ad engine (local sponsors sold by a local, not a cold call).
+
+### Open questions to resolve before this ships (NOT blocking current launch)
+1. **Compensation model** — per-listing bounty, retainer, commission on local ad sales, or a mix?
+2. **Role vs. contractor** — legal classification matters (employee vs. 1099), esp. after disasters
+   where "helping" and "selling" blur.
+3. **Abuse guard** — what stops an ambassador from favoring their own business or a friend's? (This
+   ties back to the ownership-transparency + verified-review layers: the ambassador *surfaces*
+   candidates, the system's independent signals still gate "verified.")
+4. **Coverage sequencing** — one ambassador per metro is a national-scale cost. Sequence by the
+   same lazy model as market scans: stand up an ambassador only when a market shows demand
+   (searches, a disaster, or listings hitting a threshold).
+
+### Near-term (optional) seed
+Kevin himself is the natural first ambassador for the Fox Cities — he already owns local
+businesses there, knows the trades, and is the brand's origin story. That's a zero-cost way to
+prove the model on the Menasha storm page before defining compensation for anyone else.
+
+---
+
+## 9. Explicit non-goals (kept out of scope on purpose)
 - Merging the three codebases or databases.
 - A payment processor on donelocal itself (Square stays in CTC/BMM; donelocal only links).
 - Auto-migrating existing CTC/BMM users into Done Local accounts (start with new claims; backfill later).

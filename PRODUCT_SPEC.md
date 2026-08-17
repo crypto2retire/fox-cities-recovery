@@ -1,9 +1,13 @@
 # Fox Cities Recovery → National "Local Recovery Network" — Product Spec
 
 ## North Star
-A privacy-first, local-first contractor/resource network that competes with Yelp & Angi
-by inverting their incentive model: **nobody pays for placement, nobody's data is sold,
-and consumers control exactly who sees their information.**
+A privacy-first, local-first **small-business directory** that competes with Google and
+Facebook by giving every locally-owned business an existence they control — because right now,
+if a small business loses Google/Facebook access, it effectively doesn't exist.
+
+**Scope: NOT just contractors.** Retail, food/restaurants, service businesses, trades —
+any locally-owned business. The disaster/recovery pages are the wedge; the directory is the
+product; the anti-monopoly mission is the why.
 
 ---
 

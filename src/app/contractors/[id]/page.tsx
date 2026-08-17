@@ -217,6 +217,12 @@ export default async function ContractorDetailPage({
                 ✉️ Send Email
               </a>
             )}
+            <Link
+              href={`/request?contractor=${contractor.id}`}
+              className="block w-full bg-green-600 hover:bg-green-500 text-white font-bold py-2.5 px-4 rounded-lg transition-colors text-sm mt-2"
+            >
+              📋 Request a Quote
+            </Link>
             <p className="text-blue-200 text-xs mt-4">
               Free estimates available for tornado-affected properties
             </p>
