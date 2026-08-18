@@ -58,28 +58,40 @@ async function main() {
   const idOk = await insertTestContractor('Verified Roofing');
   const idFlag = await insertTestContractor('Mystery Roofing');
   const idErr = await insertTestContractor('Errored Roofing');
+  const idGeneric = await insertTestContractor('Generic Roofing');
+  await getPool().query(
+    'UPDATE contractors SET facebook_url = $2 WHERE id = $1',
+    [idGeneric, 'https://www.facebook.com']
+  );
 
   const stub: VerifyFn = async (c: Contractor) => {
-    if (c.name === 'Verified Roofing') return { exists: true, city_confirmed: true, established_year: 2012, pre_storm_presence: true, evidence: 'BBB + website Est. 2012', confidence: 'high' } as VerificationLLMResult;
-    if (c.name === 'Mystery Roofing') return { exists: true, city_confirmed: true, established_year: null, pre_storm_presence: null, evidence: 'No founding info', confidence: 'medium' } as VerificationLLMResult;
+    if (c.name === 'Verified Roofing') return { exists: true, city_confirmed: true, established_year: 2012, pre_storm_presence: true, evidence: 'BBB + website Est. 2012', confidence: 'high', facebook_url: 'https://www.facebook.com/verifiedroofing', instagram_url: 'https://www.instagram.com/verifiedroofing' } as VerificationLLMResult;
+    if (c.name === 'Mystery Roofing') return { exists: true, city_confirmed: true, established_year: null, pre_storm_presence: null, evidence: 'No founding info', confidence: 'medium', facebook_url: 'https://www.facebook.com' } as VerificationLLMResult;
+    if (c.name === 'Generic Roofing') return { exists: true, city_confirmed: true, established_year: null, pre_storm_presence: true, evidence: 'Exists, no founding info', confidence: 'medium' } as VerificationLLMResult;
     throw new Error('simulated LLM failure');
   };
 
-  const outcomes = await verifyContractorsWithAI([idOk, idFlag, idErr], stub);
-  const byName = Object.fromEntries(outcomes.map((o) => [o.name, o.status]));
-  check(byName['Verified Roofing'] === 'verified', 'stub-confirmed -> verified', byName['Verified Roofing']);
-  check(byName['Mystery Roofing'] === 'needs_review', 'stub-uncertain -> needs_review', byName['Mystery Roofing']);
-  check(byName['Errored Roofing'] === 'failed', 'LLM error -> failed', byName['Errored Roofing']);
+  const outcomes = await verifyContractorsWithAI([idOk, idFlag, idErr, idGeneric], stub);
+  const byName = Object.fromEntries(outcomes.map((o) => [o.name, o]));
+  check(byName['Verified Roofing']?.status === 'verified', 'stub-confirmed -> verified', byName['Verified Roofing']?.status);
+  check(byName['Mystery Roofing']?.status === 'needs_review', 'stub-uncertain -> needs_review', byName['Mystery Roofing']?.status);
+  check(byName['Errored Roofing']?.status === 'failed', 'LLM error -> failed', byName['Errored Roofing']?.status);
+  check(byName['Verified Roofing']?.facebookUrl === 'https://www.facebook.com/verifiedroofing', 'social url captured from AI', byName['Verified Roofing']?.facebookUrl);
+  check(byName['Mystery Roofing']?.facebookUrl == null, 'generic facebook.com root rejected', byName['Mystery Roofing']?.facebookUrl);
 
-  const rows = await query<{ name: string; verified: boolean; verification_status: string }>(
-    'SELECT name, verified, verification_status FROM contractors WHERE id = ANY($1::text[])',
-    [[idOk, idFlag, idErr]]
+  const rows = await query<{ name: string; verified: boolean; verification_status: string; facebook_url: string | null; instagram_url: string | null }>(
+    'SELECT name, verified, verification_status, facebook_url, instagram_url FROM contractors WHERE id = ANY($1::text[])',
+    [[idOk, idFlag, idErr, idGeneric]]
   );
   const rByName = Object.fromEntries(rows.map((r) => [r.name, r]));
   check(rByName['Verified Roofing']?.verified === true, 'DB: verified=true for confirmed', rByName['Verified Roofing']);
   check(rByName['Verified Roofing']?.verification_status === 'verified', 'DB: status=verified', rByName['Verified Roofing']);
+  check(rByName['Verified Roofing']?.facebook_url === 'https://www.facebook.com/verifiedroofing', 'DB: facebook_url stored', rByName['Verified Roofing']?.facebook_url);
+  check(rByName['Verified Roofing']?.instagram_url === 'https://www.instagram.com/verifiedroofing', 'DB: instagram_url stored', rByName['Verified Roofing']?.instagram_url);
   check(rByName['Mystery Roofing']?.verification_status === 'needs_review', 'DB: status=needs_review', rByName['Mystery Roofing']);
+  check(rByName['Mystery Roofing']?.facebook_url == null, 'DB: generic facebook root NOT stored', rByName['Mystery Roofing']?.facebook_url);
   check(rByName['Errored Roofing']?.verification_status === 'failed', 'DB: status=failed', rByName['Errored Roofing']);
+  check(rByName['Generic Roofing']?.facebook_url == null, 'hygiene: pre-existing generic facebook root cleaned', rByName['Generic Roofing']?.facebook_url);
 
   // Queue helpers surface the right sets.
   const unverified = await getUnverifiedContractors();

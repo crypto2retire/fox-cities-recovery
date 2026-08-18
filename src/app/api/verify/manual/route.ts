@@ -44,6 +44,8 @@ export async function GET(request: NextRequest) {
       city: c.city,
       website: c.website,
       yearEstablished: c.yearEstablished,
+      facebookUrl: c.facebookUrl ?? null,
+      instagramUrl: c.instagramUrl ?? null,
       verificationStatus: c.verificationStatus,
       verificationNote: c.verificationNote,
       verificationCheckedAt: c.verificationCheckedAt,

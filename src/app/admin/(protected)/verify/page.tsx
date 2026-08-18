@@ -11,11 +11,36 @@ interface UnverifiedItem {
   city: string;
   website: string | null;
   yearEstablished: number | null;
+  facebookUrl?: string | null;
+  instagramUrl?: string | null;
 }
 
 interface ReviewItem extends UnverifiedItem {
   verificationNote: string | null;
   verificationCheckedAt: string | null;
+}
+
+function SocialLinks({ facebookUrl, instagramUrl, className = "" }: { facebookUrl?: string | null; instagramUrl?: string | null; className?: string }) {
+  const links = [
+    facebookUrl ? { href: facebookUrl, label: "Facebook", icon: "📘" } : null,
+    instagramUrl ? { href: instagramUrl, label: "Instagram", icon: "📷" } : null,
+  ].filter(Boolean) as { href: string; label: string; icon: string }[];
+  if (!links.length) return null;
+  return (
+    <span className={`inline-flex gap-2 text-xs ${className}`}>
+      {links.map((l) => (
+        <a
+          key={l.label}
+          href={l.href}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center gap-1 rounded-full bg-white border border-gray-200 px-2.5 py-1 text-gray-700 hover:border-brand-400 hover:text-brand-600 transition-colors"
+        >
+          <span aria-hidden>{l.icon}</span> {l.label}
+        </a>
+      ))}
+    </span>
+  );
 }
 
 interface Outcome {
@@ -131,9 +156,12 @@ export default function AdminVerifyPage() {
             {unverified.map((c) => (
               <div key={c.id} className="flex items-center justify-between gap-3 rounded-lg border border-gray-100 bg-gray-50/60 px-3 py-2 text-sm">
                 <div className="min-w-0">
-                  <span className="font-semibold">{c.name}</span>
-                  <span className="text-gray-500"> · {CATEGORY_LABELS[c.category as keyof typeof CATEGORY_LABELS] ?? c.category} · {c.city}</span>
-                  {c.website && <span className="text-gray-400"> · {c.website.replace(/^https?:\/\//, "")}</span>}
+                  <div>
+                    <span className="font-semibold">{c.name}</span>
+                    <span className="text-gray-500"> · {CATEGORY_LABELS[c.category as keyof typeof CATEGORY_LABELS] ?? c.category} · {c.city}</span>
+                    {c.website && <span className="text-gray-400"> · {c.website.replace(/^https?:\/\//, "")}</span>}
+                  </div>
+                  <SocialLinks facebookUrl={c.facebookUrl} instagramUrl={c.instagramUrl} className="mt-1.5" />
                 </div>
                 <span className="shrink-0 rounded-full bg-amber-100 text-amber-700 text-xs font-semibold px-2.5 py-1">Unverified</span>
               </div>
@@ -187,11 +215,14 @@ export default function AdminVerifyPage() {
                       {c.name}
                       <span className="text-gray-500 font-normal"> · {CATEGORY_LABELS[c.category as keyof typeof CATEGORY_LABELS] ?? c.category} · {c.city}</span>
                     </div>
-                    {c.website && (
-                      <a href={c.website} target="_blank" rel="noreferrer" className="text-sm text-brand-600 hover:underline">
-                        {c.website.replace(/^https?:\/\//, "")}
-                      </a>
-                    )}
+                    <div className="mt-1.5 flex flex-wrap items-center gap-2">
+                      {c.website && (
+                        <a href={c.website} target="_blank" rel="noreferrer" className="text-sm text-brand-600 hover:underline">
+                          {c.website.replace(/^https?:\/\//, "")}
+                        </a>
+                      )}
+                      <SocialLinks facebookUrl={c.facebookUrl} instagramUrl={c.instagramUrl} />
+                    </div>
                     {c.verificationNote && (
                       <p className="text-xs text-gray-600 mt-2 leading-relaxed">{c.verificationNote}</p>
                     )}

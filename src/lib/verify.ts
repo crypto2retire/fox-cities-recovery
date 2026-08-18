@@ -22,6 +22,8 @@ export interface VerificationLLMResult {
   pre_storm_presence: boolean | null;
   evidence: string;
   confidence: 'high' | 'medium' | 'low';
+  facebook_url?: string | null;
+  instagram_url?: string | null;
 }
 
 export type VerifyFn = (c: Contractor) => Promise<VerificationLLMResult>;
@@ -32,6 +34,8 @@ export interface VerificationOutcome {
   status: VerificationStatus;
   yearEstablished: number | null;
   note: string;
+  facebookUrl?: string | null;
+  instagramUrl?: string | null;
 }
 
 const VERIFY_MODEL = process.env.GEMINI_SCAN_MODEL || 'gemini-3.5-flash-lite';
@@ -43,13 +47,15 @@ For each business, use Google Search to check:
 1. Does the business actually exist?
 2. Is it really located in/near the given city/state?
 3. Is there evidence it existed BEFORE July 27, 2026 (e.g. an establishment year, old reviews, local news, BBB, Google Business profile, its own website)?
+4. Find the business's OWN official social media pages (Facebook and/or Instagram) if they exist.
 
 Respond with ONLY a JSON object:
-{"exists":true|false,"city_confirmed":true|false,"established_year":number|null,"pre_storm_presence":true|false|null,"evidence":"brief factual summary with source names","confidence":"high"|"medium"|"low"}
+{"exists":true|false,"city_confirmed":true|false,"established_year":number|null,"pre_storm_presence":true|false|null,"evidence":"brief factual summary with source names","confidence":"high"|"medium"|"low","facebook_url":"https://www.facebook.com/..."|null,"instagram_url":"https://www.instagram.com/..."|null}
 
 Rules:
 - established_year: ONLY a number if a source states it (website says "Est. 2015", Google Business years in business, BBB, etc.). Otherwise null.
 - pre_storm_presence: true ONLY with actual evidence of existence before 2026-07-27. null if you cannot determine it.
+- facebook_url / instagram_url: ONLY the business's own official page, full URL. null if you cannot find it or it is only the generic facebook.com / instagram.com root page.
 - Never invent facts. If you cannot verify something, say so and use null / low confidence.
 - A business that clearly started in 2026 or later is NOT eligible (pre_storm_presence=false).`;
 
@@ -87,6 +93,15 @@ function withTimeout<T>(ms: number, p: Promise<T>): Promise<T> {
   });
 }
 
+/** Keep only specific social page URLs (reject generic facebook.com / instagram.com roots). */
+function cleanSocialUrl(url: string | null | undefined): string | null {
+  if (!url) return null;
+  const u = url.trim();
+  if (!u || u.length > 200) return null;
+  if (/^(https?:\/\/)?(www\.)?(facebook|instagram)\.com\/?$/i.test(u)) return null;
+  return u;
+}
+
 /** Decide the outcome from the LLM result. Conservative: any uncertainty → needs_review. */
 export function decideVerification(r: VerificationLLMResult, c: Contractor): VerificationOutcome {
   const name = c.name;
@@ -96,6 +111,9 @@ export function decideVerification(r: VerificationLLMResult, c: Contractor): Ver
     r.pre_storm_presence === true &&
     r.confidence !== 'low';
 
+  const facebookUrl = cleanSocialUrl(r.facebook_url);
+  const instagramUrl = cleanSocialUrl(r.instagram_url);
+
   if (confirmed) {
     return {
       contractorId: c.id,
@@ -103,6 +121,8 @@ export function decideVerification(r: VerificationLLMResult, c: Contractor): Ver
       status: 'verified',
       yearEstablished: typeof r.established_year === 'number' && r.established_year > 1900 && r.established_year <= 2026 ? r.established_year : null,
       note: `AI verified (${r.confidence}): ${r.evidence}`,
+      facebookUrl,
+      instagramUrl,
     };
   }
 
@@ -120,32 +140,25 @@ export function decideVerification(r: VerificationLLMResult, c: Contractor): Ver
     status: 'needs_review',
     yearEstablished: null,
     note: `AI could not confirm (${r.confidence}): ${detail}. Evidence: ${r.evidence}`,
+    facebookUrl,
+    instagramUrl,
   };
 }
 
 async function applyOutcome(o: VerificationOutcome): Promise<void> {
   const pool = getPool();
-  if (o.status === 'verified') {
-    await pool.query(
-      `UPDATE contractors
-          SET verified = TRUE,
-              verification_status = 'verified',
-              verification_note = $2,
-              verification_checked_at = now(),
-              year_established = COALESCE($3::int, year_established)
-        WHERE id = $1`,
-      [o.contractorId, o.note, o.yearEstablished]
-    );
-  } else {
-    await pool.query(
-      `UPDATE contractors
-          SET verification_status = $2,
-              verification_note = $3,
-              verification_checked_at = now()
-        WHERE id = $1`,
-      [o.contractorId, o.status, o.note]
-    );
-  }
+  await pool.query(
+    `UPDATE contractors
+        SET verification_status = $2,
+            verification_note = $3,
+            verification_checked_at = now(),
+            facebook_url = COALESCE(NULLIF($4, ''), facebook_url),
+            instagram_url = COALESCE(NULLIF($5, ''), instagram_url),
+            verified = CASE WHEN $2 = 'verified' THEN TRUE ELSE verified END,
+            year_established = CASE WHEN $2 = 'verified' THEN COALESCE($6::int, year_established) ELSE year_established END
+      WHERE id = $1`,
+    [o.contractorId, o.status, o.note, o.facebookUrl ?? '', o.instagramUrl ?? '', o.yearEstablished]
+  );
 }
 
 export async function getUnverifiedContractors(): Promise<Contractor[]> {
@@ -165,6 +178,15 @@ export async function verifyContractorsWithAI(
   ids?: string[],
   verifyFn?: VerifyFn
 ): Promise<VerificationOutcome[]> {
+  // Hygiene: bare facebook.com / instagram.com roots (from early scans) are
+  // not useful pages — drop them whenever verification runs.
+  await getPool().query(
+    `UPDATE contractors SET facebook_url = NULL WHERE facebook_url ~ '^(https?://)?(www\\.)?facebook\\.com/?$'`
+  );
+  await getPool().query(
+    `UPDATE contractors SET instagram_url = NULL WHERE instagram_url ~ '^(https?://)?(www\\.)?instagram\\.com/?$'`
+  );
+
   const contractors: Contractor[] = ids?.length
     ? await query<Contractor>('SELECT * FROM contractors WHERE id = ANY($1::text[])', [ids])
     : await getUnverifiedContractors();

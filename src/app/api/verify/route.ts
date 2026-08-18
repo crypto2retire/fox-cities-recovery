@@ -51,6 +51,8 @@ export async function GET() {
       city: c.city,
       website: c.website,
       yearEstablished: c.yearEstablished,
+      facebookUrl: c.facebookUrl ?? null,
+      instagramUrl: c.instagramUrl ?? null,
     })),
   });
 }
