@@ -29,6 +29,8 @@ export async function POST(request: NextRequest) {
         status: o.status,
         yearEstablished: o.yearEstablished,
         note: o.note,
+        facebookUrl: o.facebookUrl ?? null,
+        instagramUrl: o.instagramUrl ?? null,
       })),
     });
   } catch (err) {
@@ -38,8 +40,8 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET() {
-  const authorized = await isAdminRequest(null);
+export async function GET(request: NextRequest) {
+  const authorized = await isAdminRequest(request.headers.get('cookie'));
   if (!authorized) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const unverified = await getUnverifiedContractors();
