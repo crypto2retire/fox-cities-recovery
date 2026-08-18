@@ -55,8 +55,8 @@ export interface ChatOptions {
   maxToolRounds?: number;
 }
 
-const DEFAULT_GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
-const DEFAULT_SCAN_MODEL = process.env.GEMINI_SCAN_MODEL || 'gemini-2.5-flash-lite';
+const DEFAULT_GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-3.5-flash';
+const DEFAULT_SCAN_MODEL = process.env.GEMINI_SCAN_MODEL || 'gemini-3.5-flash-lite';
 
 function provider(): 'gemini' | 'openai-compatible' {
   const p = (process.env.LLM_PROVIDER || 'gemini').toLowerCase();
