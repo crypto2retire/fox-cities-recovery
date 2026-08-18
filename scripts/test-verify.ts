@@ -99,6 +99,13 @@ async function main() {
   check(unverified.some((c) => c.id === idErr), 'failed item still in unverified set', unverified.map((c) => c.id));
   check(needsReview.some((c) => c.id === idFlag), 'needs_review item in review queue', needsReview.map((c) => c.id));
 
+  // Row mapping: queue helpers must map facebook_url -> facebookUrl (regression).
+  const idSocial = await insertTestContractor('Social Roofing');
+  await getPool().query('UPDATE contractors SET facebook_url = $2 WHERE id = $1', [idSocial, 'https://www.facebook.com/socialroofing']);
+  const unv2 = await getUnverifiedContractors();
+  const socialRow = unv2.find((c) => c.id === idSocial);
+  check(socialRow?.facebookUrl === 'https://www.facebook.com/socialroofing', 'queue mapping: facebook_url -> facebookUrl', socialRow?.facebookUrl);
+
   // --- manual review ---
   console.log('\nmanual review:');
   await manualReview(idOk, 'unflag');

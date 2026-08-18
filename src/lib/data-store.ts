@@ -82,7 +82,7 @@ function toServices(v: unknown): string[] {
   return [];
 }
 
-function rowToContractor(row: ContractorRow): Contractor {
+export function rowToContractor(row: ContractorRow): Contractor {
   return {
     id: row.id,
     name: row.name,

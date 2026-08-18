@@ -11,6 +11,7 @@
 // NEVER fabricates: the LLM must cite evidence; anything uncertain is flagged.
 import { getPool, query } from './db';
 import { chatJson } from './llm';
+import { rowToContractor } from './data-store';
 import type { Contractor } from './types';
 
 export type VerificationStatus = 'unverified' | 'verified' | 'needs_review' | 'failed' | 'rejected';
@@ -162,15 +163,17 @@ async function applyOutcome(o: VerificationOutcome): Promise<void> {
 }
 
 export async function getUnverifiedContractors(): Promise<Contractor[]> {
-  return query<Contractor>(
+  const rows = await query<never>(
     "SELECT * FROM contractors WHERE verified = FALSE AND verification_status <> 'rejected' ORDER BY created_at DESC"
   );
+  return rows.map(rowToContractor);
 }
 
 export async function getNeedsReviewContractors(): Promise<Contractor[]> {
-  return query<Contractor>(
+  const rows = await query<never>(
     "SELECT * FROM contractors WHERE verification_status = 'needs_review' ORDER BY verification_checked_at DESC NULLS LAST"
   );
+  return rows.map(rowToContractor);
 }
 
 /** Run AI verification over unverified contractors (or a specific set of ids). */
@@ -188,7 +191,7 @@ export async function verifyContractorsWithAI(
   );
 
   const contractors: Contractor[] = ids?.length
-    ? await query<Contractor>('SELECT * FROM contractors WHERE id = ANY($1::text[])', [ids])
+    ? (await query<never>('SELECT * FROM contractors WHERE id = ANY($1::text[])', [ids])).map(rowToContractor)
     : await getUnverifiedContractors();
 
   const outcomes: VerificationOutcome[] = [];
