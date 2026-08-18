@@ -29,6 +29,9 @@ export interface Contractor {
   weaknesses?: string[];
   lastScanned?: string; // ISO timestamp of last market scan
   scanSource?: string;  // 'market-scan' | 'manual' | 'google'
+  verificationStatus?: string;   // 'unverified' | 'verified' | 'needs_review' | 'failed' | 'rejected'
+  verificationNote?: string | null;
+  verificationCheckedAt?: string | null;
 }
 
 export type OwnershipType = 

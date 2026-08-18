@@ -138,7 +138,9 @@ function rowToReview(row: ReviewRow): Review {
 // ---------------------------------------------------------------------------
 
 export async function getContractors(): Promise<Contractor[]> {
-  const rows = await query<ContractorRow>('SELECT * FROM contractors');
+  const rows = await query<ContractorRow>(
+    "SELECT * FROM contractors WHERE verification_status IS DISTINCT FROM 'rejected'"
+  );
   return sortByCredibility(rows.map(rowToContractor));
 }
 
@@ -151,7 +153,8 @@ export interface ContractorSearchParams {
 
 /** Server-side search across name, description, services, and city. */
 export async function searchContractors(params: ContractorSearchParams): Promise<Contractor[]> {
-  const clauses: string[] = [];
+  // Rejected (manually removed / AI-flagged-and-rejected) listings never appear.
+  const clauses: string[] = ["verification_status IS DISTINCT FROM 'rejected'"];
   const vals: unknown[] = [];
   let i = 1;
 
