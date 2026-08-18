@@ -23,6 +23,13 @@ export function createSessionToken(): string {
 
 export function verifySessionToken(token: string): boolean {
   if (!token || !SECRET) return false;
+  // Next.js URL-encodes cookie values on set ('admin%3A...' for 'admin:...').
+  // API routes read the raw header (still encoded) — decode before verifying.
+  try {
+    token = decodeURIComponent(token);
+  } catch {
+    // Not URL-encoded — leave as-is.
+  }
   const [payload, sig] = token.split('.');
   if (!payload || !sig) return false;
   const expectedSig = crypto.createHmac('sha256', SECRET).update(payload).digest('hex');
